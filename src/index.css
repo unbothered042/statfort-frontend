@@ -27,6 +27,7 @@ html, body {
     font-family: 'Exo 2', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
+    width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -145,10 +146,30 @@ input, textarea, select {
 .page-container {
     min-height: 100vh;
     background: var(--black);
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .card {
     background: var(--dark-2);
     border: 1px solid var(--border);
     padding: 32px;
+}
+
+@media (max-width: 768px) {
+    .card {
+        padding: 20px 16px;
+    }
+
+    h1 {
+        font-size: 2.2rem !important;
+    }
+
+    h2 {
+        font-size: 1.8rem !important;
+    }
+
+    section {
+        padding: 48px 16px !important;
+    }
 }

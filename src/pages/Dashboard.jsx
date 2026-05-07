@@ -137,18 +137,18 @@ const Dashboard = () => {
     return (
         <div className="page-container">
             <Navbar />
-            <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 20px' }}>
+            <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '40px 16px' }}>
 
-                <div style={{ marginBottom: '48px' }}>
-                    <h1 style={{ fontSize: '2.8rem', marginBottom: '8px' }}>
+                <div style={{ marginBottom: '40px' }}>
+                    <h1 style={{ fontSize: '2.4rem', marginBottom: '8px' }}>
                         WELCOME, <span style={{ color: 'var(--gold)' }}>{user?.first_name?.toUpperCase()}</span>
                     </h1>
                     <div className="gold-line" />
                 </div>
 
-                <div className="card" style={{ marginBottom: '40px' }}>
+                <div className="card" style={{ marginBottom: '32px' }}>
                     <h2 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>ADD <span style={{ color: 'var(--gold)' }}>GAME</span></h2>
-                    <form onSubmit={handleAddGame} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr auto', gap: '16px', alignItems: 'end' }}>
+                    <form onSubmit={handleAddGame} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <div>
                             <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Game</label>
                             <select className="input-field" value={addForm.game_id} onChange={(e) => setAddForm({ ...addForm, game_id: e.target.value })} required style={{ background: 'var(--dark-2)', cursor: 'pointer' }}>
@@ -160,7 +160,7 @@ const Dashboard = () => {
                             <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Gaming ID</label>
                             <input className="input-field" placeholder="Your in-game username" value={addForm.gaming_id} onChange={(e) => setAddForm({ ...addForm, gaming_id: e.target.value })} required />
                         </div>
-                        <button className="btn-gold" type="submit" style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
+                        <button className="btn-gold" type="submit" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%' }}>
                             <FiPlus size={16} /> Add Game
                         </button>
                     </form>
@@ -173,7 +173,7 @@ const Dashboard = () => {
                 </div>
 
                 {myGames.length === 0 ? (
-                    <div className="card" style={{ textAlign: 'center', padding: '60px' }}>
+                    <div className="card" style={{ textAlign: 'center', padding: '60px 20px' }}>
                         <p style={{ color: 'var(--text-dim)' }}>No games added yet. Add your first game above.</p>
                     </div>
                 ) : (
@@ -182,12 +182,12 @@ const Dashboard = () => {
                             const gameStats = getStatsForGame(pg.id);
                             return (
                                 <div key={pg.id} className="card" style={{ position: 'relative' }}>
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
                                         <div>
                                             <h3 style={{ fontSize: '1.4rem', marginBottom: '4px' }}>{pg.game.name}</h3>
                                             <p style={{ color: 'var(--gold)', fontSize: '0.9rem', fontFamily: 'Rajdhani', letterSpacing: '0.05em' }}>{pg.gaming_id}</p>
                                         </div>
-                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                                             {pg.game.slug === 'fortnite' && (
                                                 <button onClick={() => handleFetchStats(pg.id)} disabled={fetchingStats[pg.id]} style={{
                                                     background: 'transparent', border: '1px solid var(--border)', color: 'var(--text-dim)',
@@ -233,7 +233,7 @@ const Dashboard = () => {
 
                                     {gameStats ? (
                                         <>
-                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '16px', marginBottom: '20px' }}>
+                                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(90px, 1fr))', gap: '12px', marginBottom: '20px' }}>
                                                 {[
                                                     { label: 'Kills', value: gameStats.kills },
                                                     { label: 'Deaths', value: gameStats.deaths },
@@ -242,9 +242,9 @@ const Dashboard = () => {
                                                     { label: 'Win Rate', value: `${gameStats.win_rate}%` },
                                                     { label: 'Matches', value: gameStats.matches_played },
                                                 ].map((stat) => (
-                                                    <div key={stat.label} style={{ background: 'var(--dark-3)', padding: '12px 16px', borderLeft: '2px solid var(--gold)' }}>
-                                                        <p style={{ color: 'var(--gold)', fontFamily: 'Rajdhani', fontSize: '1.3rem', fontWeight: 700 }}>{stat.value}</p>
-                                                        <p style={{ color: 'var(--text-dim)', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{stat.label}</p>
+                                                    <div key={stat.label} style={{ background: 'var(--dark-3)', padding: '12px', borderLeft: '2px solid var(--gold)' }}>
+                                                        <p style={{ color: 'var(--gold)', fontFamily: 'Rajdhani', fontSize: '1.2rem', fontWeight: 700 }}>{stat.value}</p>
+                                                        <p style={{ color: 'var(--text-dim)', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{stat.label}</p>
                                                     </div>
                                                 ))}
                                             </div>
@@ -275,7 +275,7 @@ const Dashboard = () => {
                                                         Submit your COD Mobile stats below. Our AI will verify your screenshot automatically.
                                                     </p>
                                                     <form onSubmit={(e) => handleCodSubmit(e, pg.id)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+                                                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px' }}>
                                                             {['kills', 'deaths', 'assists', 'wins', 'matches_played', 'score'].map((field) => (
                                                                 <div key={field}>
                                                                     <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.8rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>{field.replace('_', ' ')}</label>
@@ -298,7 +298,7 @@ const Dashboard = () => {
                                                         </div>
                                                         {codError[pg.id] && <p className="error-msg">{codError[pg.id]}</p>}
                                                         {codSuccess[pg.id] && <p className="success-msg">{codSuccess[pg.id]}</p>}
-                                                        <button className="btn-gold" type="submit" disabled={codLoading[pg.id]} style={{ display: 'flex', alignItems: 'center', gap: '8px', width: 'fit-content' }}>
+                                                        <button className="btn-gold" type="submit" disabled={codLoading[pg.id]} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%' }}>
                                                             <FiUpload size={14} /> {codLoading[pg.id] ? 'Verifying with AI...' : 'Submit Stats'}
                                                         </button>
                                                     </form>
