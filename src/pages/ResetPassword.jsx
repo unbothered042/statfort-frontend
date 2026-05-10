@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 
 const ResetPassword = () => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ email: '', code: '', new_password: '' });
+    const location = useLocation();
+    const [form, setForm] = useState({ email: location.state?.email || '', new_password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -33,17 +34,13 @@ const ResetPassword = () => {
                     <div style={{ marginBottom: '32px' }}>
                         <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>RESET <span style={{ color: 'var(--gold)' }}>PASSWORD</span></h1>
                         <div className="gold-line" />
-                        <p style={{ color: 'var(--text-dim)', marginTop: '12px' }}>Enter your reset code and new password</p>
+                        <p style={{ color: 'var(--text-dim)', marginTop: '12px' }}>Enter your new password</p>
                     </div>
                     <div className="card">
                         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Email</label>
                                 <input className="input-field" name="email" type="email" placeholder="john@example.com" value={form.email} onChange={handleChange} required />
-                            </div>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Reset Code</label>
-                                <input className="input-field" name="code" placeholder="6-digit code" value={form.code} onChange={handleChange} maxLength={6} required />
                             </div>
                             <div>
                                 <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>New Password</label>
