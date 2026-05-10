@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Container, Row, Col } from 'react-bootstrap';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 
@@ -28,48 +29,48 @@ const Register = () => {
     return (
         <div className="page-container">
             <Navbar />
-            <div style={{ minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-                <div style={{ width: '100%', maxWidth: '480px' }}>
+            <Container style={{ minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+                <div style={{ width: '100%', maxWidth: '520px' }}>
                     <div style={{ marginBottom: '32px' }}>
-                        <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>CREATE <span style={{ color: 'var(--gold)' }}>ACCOUNT</span></h1>
+                        <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>CREATE <span style={{ color: '#FFD700' }}>ACCOUNT</span></h1>
                         <div className="gold-line" />
-                        <p style={{ color: 'var(--text-dim)', marginTop: '12px' }}>Join the Nigerian gaming leaderboard</p>
+                        <p className="text-dim mt-2">Join the Nigerian gaming leaderboard</p>
                     </div>
-                    <div className="card">
+                    <div className="sf-card">
                         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>First Name</label>
-                                    <input className="input-field" name="first_name" placeholder="John" value={form.first_name} onChange={handleChange} required />
-                                </div>
-                                <div>
-                                    <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Last Name</label>
-                                    <input className="input-field" name="last_name" placeholder="Doe" value={form.last_name} onChange={handleChange} required />
-                                </div>
+                            <Row className="g-3">
+                                <Col sm={6}>
+                                    <label className="sf-label">First Name</label>
+                                    <input className="sf-input" name="first_name" placeholder="John" value={form.first_name} onChange={handleChange} required />
+                                </Col>
+                                <Col sm={6}>
+                                    <label className="sf-label">Last Name</label>
+                                    <input className="sf-input" name="last_name" placeholder="Doe" value={form.last_name} onChange={handleChange} required />
+                                </Col>
+                            </Row>
+                            <div>
+                                <label className="sf-label">Email</label>
+                                <input className="sf-input" name="email" type="email" placeholder="john@example.com" value={form.email} onChange={handleChange} required />
                             </div>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Email</label>
-                                <input className="input-field" name="email" type="email" placeholder="john@example.com" value={form.email} onChange={handleChange} required />
+                                <label className="sf-label">Phone</label>
+                                <input className="sf-input" name="phone" placeholder="08012345678" value={form.phone} onChange={handleChange} />
                             </div>
                             <div>
-                                <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Phone</label>
-                                <input className="input-field" name="phone" placeholder="08012345678" value={form.phone} onChange={handleChange} />
-                            </div>
-                            <div>
-                                <label style={{ display: 'block', marginBottom: '6px', fontSize: '0.85rem', color: 'var(--text-dim)', fontFamily: 'Rajdhani', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Password</label>
-                                <input className="input-field" name="password" type="password" placeholder="Min 6 characters" value={form.password} onChange={handleChange} required />
+                                <label className="sf-label">Password</label>
+                                <input className="sf-input" name="password" type="password" placeholder="Min 6 characters" value={form.password} onChange={handleChange} required />
                             </div>
                             {error && <p className="error-msg">{error}</p>}
                             <button className="btn-gold" type="submit" disabled={loading} style={{ marginTop: '8px', width: '100%' }}>
                                 {loading ? 'Creating Account...' : 'Create Account'}
                             </button>
                         </form>
-                        <p style={{ textAlign: 'center', marginTop: '24px', color: 'var(--text-dim)', fontSize: '0.9rem' }}>
+                        <p className="text-center mt-4 text-dim" style={{ fontSize: '0.9rem' }}>
                             Already have an account? <Link to="/login">Login</Link>
                         </p>
                     </div>
                 </div>
-            </div>
+            </Container>
         </div>
     );
 };

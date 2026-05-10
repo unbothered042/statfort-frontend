@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Container, Row, Col, Table } from 'react-bootstrap';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 import { FiAward, FiTrendingUp } from 'react-icons/fi';
@@ -14,7 +15,7 @@ const Leaderboard = () => {
             try {
                 const res = await API.get(`/leaderboard/${activeGame}/`);
                 setData(res.data);
-            } catch (err) {
+            } catch {
                 setData([]);
             } finally {
                 setLoading(false);
@@ -23,99 +24,87 @@ const Leaderboard = () => {
         fetch();
     }, [activeGame]);
 
+    const games = [
+        { slug: 'fortnite', name: 'Fortnite' },
+        { slug: 'apex-legends', name: 'Apex Legends' },
+        { slug: 'cod-mobile', name: 'COD Mobile' },
+    ];
+
     return (
         <div className="page-container">
             <Navbar />
-            <div style={{ maxWidth: '900px', margin: '0 auto', padding: '60px 20px' }}>
+            <Container style={{ padding: '60px 20px' }}>
                 <div style={{ marginBottom: '40px' }}>
                     <h1 style={{ fontSize: '3rem', marginBottom: '8px' }}>
-                        <span style={{ color: 'var(--gold)' }}>LEADER</span>BOARD
+                        <span style={{ color: '#FFD700' }}>LEADER</span>BOARD
                     </h1>
                     <div className="gold-line" />
-                    <p style={{ color: 'var(--text-dim)', marginTop: '12px' }}>Top Nigerian players ranked by score</p>
+                    <p className="text-dim mt-2">Top Nigerian players ranked by score</p>
                 </div>
 
-                <div style={{ display: 'flex', gap: '12px', marginBottom: '40px' }}>
-                    {['fortnite', 'cod-mobile'].map((game) => (
-                        <button key={game} onClick={() => setActiveGame(game)} style={{
-                            padding: '10px 28px',
-                            fontFamily: 'Rajdhani, sans-serif',
-                            fontWeight: 700,
-                            fontSize: '0.95rem',
-                            letterSpacing: '0.08em',
-                            textTransform: 'uppercase',
-                            background: activeGame === game ? 'var(--gold)' : 'transparent',
-                            color: activeGame === game ? 'var(--black)' : 'var(--text-dim)',
-                            border: '1px solid',
-                            borderColor: activeGame === game ? 'var(--gold)' : 'var(--border)',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
+                <div className="d-flex gap-2 flex-wrap mb-4">
+                    {games.map((game) => (
+                        <button key={game.slug} onClick={() => setActiveGame(game.slug)} style={{
+                            padding: '10px 28px', fontFamily: 'Rajdhani, sans-serif', fontWeight: 700,
+                            fontSize: '0.95rem', letterSpacing: '0.08em', textTransform: 'uppercase',
+                            background: activeGame === game.slug ? '#FFD700' : 'transparent',
+                            color: activeGame === game.slug ? '#0A0A0A' : '#AAAAAA',
+                            border: '1px solid', borderColor: activeGame === game.slug ? '#FFD700' : 'rgba(255,215,0,0.2)',
+                            cursor: 'pointer', transition: 'all 0.2s', borderRadius: 0,
                         }}>
-                            {game === 'fortnite' ? 'Fortnite' : 'COD Mobile'}
+                            {game.name}
                         </button>
                     ))}
                 </div>
 
                 {loading ? (
-                    <p style={{ color: 'var(--text-dim)', textAlign: 'center', padding: '60px 0' }}>Loading...</p>
+                    <p className="text-dim text-center py-5">Loading...</p>
                 ) : data.length === 0 ? (
-                    <div style={{ textAlign: 'center', padding: '80px 0' }}>
-                        <FiTrendingUp size={48} style={{ color: 'var(--border)', marginBottom: '16px' }} />
-                        <p style={{ color: 'var(--text-dim)', fontSize: '1.1rem' }}>No players on the leaderboard yet.</p>
-                        <p style={{ color: 'var(--text-dim)', fontSize: '0.9rem', marginTop: '8px' }}>Be the first to submit your stats.</p>
+                    <div className="text-center py-5">
+                        <FiTrendingUp size={48} style={{ color: 'rgba(255,215,0,0.2)', marginBottom: '16px' }} />
+                        <p className="text-dim">No players on the leaderboard yet. Be the first to submit your stats.</p>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {data.map((player) => (
-                            <div key={player.rank} className="card" style={{
-                                display: 'grid',
-                                gridTemplateColumns: '60px 1fr repeat(4, auto)',
-                                alignItems: 'center',
-                                gap: '24px',
-                                padding: '16px 24px',
-                                borderColor: player.rank <= 3 ? 'var(--gold)' : 'var(--border)',
-                                transition: 'border-color 0.2s',
-                            }}
-                            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--gold)'}
-                            onMouseLeave={e => e.currentTarget.style.borderColor = player.rank <= 3 ? 'var(--gold)' : 'var(--border)'}
-                            >
-                                <div style={{
-                                    fontFamily: 'Rajdhani, sans-serif',
-                                    fontSize: player.rank <= 3 ? '1.5rem' : '1.2rem',
-                                    fontWeight: 700,
-                                    color: player.rank === 1 ? 'var(--gold)' : player.rank === 2 ? '#C0C0C0' : player.rank === 3 ? '#CD7F32' : 'var(--text-dim)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                }}>
-                                    {player.rank <= 3 && <FiAward size={16} />}
-                                    #{player.rank}
-                                </div>
-                                <div>
-                                    <p style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '1.1rem', fontWeight: 700 }}>{player.username}</p>
-                                    <p style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>{player.game}</p>
-                                </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ color: 'var(--gold)', fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.kd_ratio}</p>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>K/D</p>
-                                </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.wins}</p>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Wins</p>
-                                </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.kills}</p>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Kills</p>
-                                </div>
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ color: 'var(--gold)', fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.score.toLocaleString()}</p>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Score</p>
-                                </div>
-                            </div>
-                        ))}
+                    <div style={{ overflowX: 'auto' }}>
+                        <Table className="sf-table" style={{ background: 'transparent' }}>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Player</th>
+                                    <th>K/D</th>
+                                    <th>Wins</th>
+                                    <th>Kills</th>
+                                    <th>Score</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.map((player) => (
+                                    <tr key={player.rank}>
+                                        <td>
+                                            <span style={{
+                                                fontFamily: 'Rajdhani, sans-serif', fontWeight: 700,
+                                                fontSize: player.rank <= 3 ? '1.3rem' : '1rem',
+                                                color: player.rank === 1 ? '#FFD700' : player.rank === 2 ? '#C0C0C0' : player.rank === 3 ? '#CD7F32' : '#AAAAAA',
+                                                display: 'flex', alignItems: 'center', gap: '4px',
+                                            }}>
+                                                {player.rank <= 3 && <FiAward size={14} />} #{player.rank}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <p style={{ fontFamily: 'Rajdhani', fontSize: '1.1rem', fontWeight: 700, margin: 0 }}>{player.username}</p>
+                                            <p style={{ fontSize: '0.8rem', color: '#AAAAAA', margin: 0 }}>{player.game}</p>
+                                        </td>
+                                        <td style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.kd_ratio}</td>
+                                        <td style={{ fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.wins}</td>
+                                        <td style={{ fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.kills}</td>
+                                        <td style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>{player.score?.toLocaleString()}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
                     </div>
                 )}
-            </div>
+            </Container>
         </div>
     );
 };

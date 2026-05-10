@@ -21,52 +21,24 @@
     --success: #00CC66;
 }
 
-html, body {
-    background-color: var(--black);
-    color: var(--text);
-    font-family: 'Exo 2', sans-serif;
+body {
+    background-color: var(--black) !important;
+    color: var(--text) !important;
+    font-family: 'Exo 2', sans-serif !important;
     min-height: 100vh;
     overflow-x: hidden;
-    width: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
+    font-family: 'Rajdhani', sans-serif !important;
+    font-weight: 700 !important;
     letter-spacing: 0.05em;
 }
 
-a {
-    color: var(--gold);
-    text-decoration: none;
-}
+a { color: var(--gold); text-decoration: none; }
+a:hover { color: var(--text); }
 
-a:hover {
-    color: var(--text);
-}
-
-button {
-    cursor: pointer;
-    font-family: 'Exo 2', sans-serif;
-}
-
-input, textarea, select {
-    font-family: 'Exo 2', sans-serif;
-}
-
-::-webkit-scrollbar {
-    width: 6px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--dark);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--gold-dim);
-    border-radius: 3px;
-}
-
+/* Bootstrap overrides */
 .btn-gold {
     background: var(--gold);
     color: var(--black);
@@ -79,14 +51,16 @@ input, textarea, select {
     text-transform: uppercase;
     clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
     transition: all 0.2s ease;
+    border-radius: 0 !important;
 }
 
 .btn-gold:hover {
-    background: var(--text);
+    background: #fff;
+    color: var(--black);
     transform: translateY(-2px);
 }
 
-.btn-outline {
+.btn-outline-gold {
     background: transparent;
     color: var(--gold);
     border: 1px solid var(--gold);
@@ -98,42 +72,68 @@ input, textarea, select {
     text-transform: uppercase;
     clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
     transition: all 0.2s ease;
+    border-radius: 0 !important;
 }
 
-.btn-outline:hover {
+.btn-outline-gold:hover {
     background: var(--gold-glow);
+    color: var(--gold);
     transform: translateY(-2px);
 }
 
-.input-field {
+.sf-input {
     width: 100%;
-    background: var(--dark-2);
-    border: 1px solid var(--border);
-    color: var(--text);
+    background: var(--dark-2) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
     padding: 12px 16px;
     font-size: 0.95rem;
     outline: none;
+    border-radius: 0 !important;
     transition: border-color 0.2s ease;
 }
 
-.input-field:focus {
+.sf-input:focus {
+    border-color: var(--gold) !important;
+    box-shadow: none !important;
+    background: var(--dark-2) !important;
+    color: var(--text) !important;
+}
+
+.sf-input::placeholder { color: var(--text-dim); }
+
+.sf-select {
+    width: 100%;
+    background: var(--dark-2) !important;
+    border: 1px solid var(--border) !important;
+    color: var(--text) !important;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    outline: none;
+    border-radius: 0 !important;
+    cursor: pointer;
+}
+
+.sf-select:focus {
+    border-color: var(--gold) !important;
+    box-shadow: none !important;
+}
+
+.sf-select option {
+    background: var(--dark-2);
+    color: var(--text);
+}
+
+.sf-card {
+    background: var(--dark-2);
+    border: 1px solid var(--border);
+    border-radius: 0 !important;
+    padding: 32px;
+}
+
+.sf-card:hover {
     border-color: var(--gold);
-}
-
-.input-field::placeholder {
-    color: var(--text-dim);
-}
-
-.error-msg {
-    color: var(--error);
-    font-size: 0.85rem;
-    margin-top: 6px;
-}
-
-.success-msg {
-    color: var(--success);
-    font-size: 0.85rem;
-    margin-top: 6px;
+    transition: border-color 0.3s;
 }
 
 .gold-line {
@@ -143,6 +143,116 @@ input, textarea, select {
     margin: 12px 0;
 }
 
+.gold-line-center {
+    width: 60px;
+    height: 3px;
+    background: var(--gold);
+    margin: 12px auto;
+}
+
+.text-gold { color: var(--gold) !important; }
+.text-dim { color: var(--text-dim) !important; }
+.error-msg { color: var(--error); font-size: 0.85rem; margin-top: 6px; }
+.success-msg { color: var(--success); font-size: 0.85rem; margin-top: 6px; }
+
+.sf-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-family: 'Rajdhani', sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.sf-stat-box {
+    background: var(--dark-3);
+    padding: 12px;
+    border-left: 2px solid var(--gold);
+}
+
+.sf-insight-box {
+    background: var(--dark-3);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-left: 3px solid var(--gold);
+}
+
+.sf-notice {
+    background: rgba(255,215,0,0.05);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px;
+}
+
+.sf-table th {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-color: var(--border) !important;
+    background: transparent !important;
+}
+
+.sf-table td {
+    border-color: var(--border) !important;
+    color: var(--text);
+    vertical-align: middle;
+}
+
+.sf-table tr:hover td {
+    background: var(--dark-2) !important;
+}
+
+.badge-verified {
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: rgba(0,204,102,0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.badge-unverified {
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: rgba(255,68,68,0.1);
+    color: var(--error);
+    border: 1px solid var(--error);
+}
+
+.badge-approved {
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: rgba(0,204,102,0.1);
+    color: var(--success);
+    border: 1px solid var(--success);
+}
+
+.badge-pending {
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: rgba(255,215,0,0.1);
+    color: var(--gold);
+    border: 1px solid var(--gold);
+}
+
+.sf-rank-1 { color: var(--gold); }
+.sf-rank-2 { color: #C0C0C0; }
+.sf-rank-3 { color: #CD7F32; }
+
 .page-container {
     min-height: 100vh;
     background: var(--black);
@@ -150,26 +260,12 @@ input, textarea, select {
     overflow-x: hidden;
 }
 
-.card {
-    background: var(--dark-2);
-    border: 1px solid var(--border);
-    padding: 32px;
-}
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--dark); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
 
 @media (max-width: 768px) {
-    .card {
-        padding: 20px 16px;
-    }
-
-    h1 {
-        font-size: 2.2rem !important;
-    }
-
-    h2 {
-        font-size: 1.8rem !important;
-    }
-
-    section {
-        padding: 48px 16px !important;
-    }
+    .sf-card { padding: 20px 16px; }
+    h1 { font-size: 2.2rem !important; }
+    h2 { font-size: 1.8rem !important; }
 }
