@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Table } from 'react-bootstrap';
+import { motion } from 'framer-motion';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
@@ -22,6 +23,7 @@ const AdminDashboard = () => {
 
     const loadData = async () => {
         setLoading(true);
+        setError('');
         try {
             const [usersRes, statsRes] = await Promise.all([
                 API.get('/users/admin/users/'),
@@ -29,8 +31,12 @@ const AdminDashboard = () => {
             ]);
             setUsers(usersRes.data);
             setStats(statsRes.data);
-        } catch {
-            setError('Access denied. Admins only.');
+        } catch (err) {
+            if (err.response?.status === 403 || err.response?.status === 401) {
+                setError('Access denied. Admins only.');
+            } else {
+                setError('Failed to load data. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -47,143 +53,186 @@ const AdminDashboard = () => {
     };
 
     if (loading) return (
-        <div className="page-container">
+        <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
             <Navbar />
-            <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
-                <p className="text-dim">Loading...</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
+                <motion.div animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 1.5, repeat: Infinity }}>
+                    <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontSize: '1.2rem', letterSpacing: '0.2em' }}>LOADING...</p>
+                </motion.div>
             </div>
         </div>
     );
 
     if (error) return (
-        <div className="page-container">
+        <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
             <Navbar />
-            <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '80vh' }}>
-                <p style={{ color: '#FF4444' }}>{error}</p>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', flexDirection: 'column', gap: '16px' }}>
+                <p style={{ color: '#FF4444', fontFamily: 'Rajdhani', fontSize: '1.1rem' }}>{error}</p>
+                <button
+                    onClick={() => { navigate('/login'); }}
+                    className="btn-gold"
+                    style={{ padding: '10px 32px', fontSize: '0.9rem' }}
+                >
+                    Login Again
+                </button>
             </div>
         </div>
     );
 
     return (
-        <div className="page-container">
+        <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
             <Navbar />
-            <Container style={{ padding: '60px 20px' }}>
-                <div style={{ marginBottom: '40px' }}>
-                    <h1 style={{ fontSize: '2.8rem', marginBottom: '8px' }}>
+            <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 20px' }}>
+
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    style={{ marginBottom: '40px' }}
+                >
+                    <h1 style={{ fontSize: '2.8rem', marginBottom: '8px', fontStyle: 'italic' }}>
                         ADMIN <span style={{ color: '#FFD700' }}>DASHBOARD</span>
                     </h1>
-                    <div className="gold-line" />
-                </div>
+                    <div style={{ width: '60px', height: '3px', background: '#FFD700' }} />
+                </motion.div>
 
-                <div className="d-flex gap-3 flex-wrap mb-4">
+                {/* Stats cards */}
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '40px' }}>
                     {[
                         { label: 'Total Users', value: users.length, icon: <FiUsers size={20} /> },
                         { label: 'Total Stats', value: stats.length, icon: <FiActivity size={20} /> },
                         { label: 'Approved Stats', value: stats.filter(s => s.status === 'approved').length, icon: <FiActivity size={20} /> },
-                    ].map((card) => (
-                        <div key={card.label} className="sf-card d-flex align-items-center gap-3" style={{ minWidth: '180px' }}>
+                    ].map((card, i) => (
+                        <motion.div
+                            key={card.label}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: i * 0.1 }}
+                            style={{
+                                background: '#111111', border: '1px solid rgba(255,215,0,0.2)',
+                                padding: '24px', display: 'flex', alignItems: 'center', gap: '16px',
+                                minWidth: '180px', position: 'relative', overflow: 'hidden',
+                            }}
+                        >
+                            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #FFD700, transparent)' }} />
                             <div style={{ color: '#FFD700' }}>{card.icon}</div>
                             <div>
-                                <p style={{ fontFamily: 'Rajdhani', fontSize: '1.8rem', fontWeight: 700, color: '#FFD700', margin: 0 }}>{card.value}</p>
+                                <p style={{ fontFamily: 'Rajdhani', fontSize: '1.8rem', fontWeight: 700, color: '#FFD700', margin: 0, lineHeight: 1 }}>{card.value}</p>
                                 <p style={{ color: '#AAAAAA', fontSize: '0.85rem', margin: 0 }}>{card.label}</p>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
                 </div>
 
-                <div className="d-flex gap-2 mb-4">
+                {/* Tabs */}
+                <div style={{ display: 'flex', gap: '12px', marginBottom: '32px' }}>
                     {[
                         { key: 'users', label: 'Users', icon: <FiUsers size={14} /> },
                         { key: 'stats', label: 'Stats', icon: <FiActivity size={14} /> },
                     ].map((tab) => (
                         <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-                            padding: '10px 28px', fontFamily: 'Rajdhani, sans-serif', fontWeight: 700,
+                            padding: '10px 28px', fontFamily: 'Rajdhani', fontWeight: 700,
                             fontSize: '0.95rem', letterSpacing: '0.08em', textTransform: 'uppercase',
                             background: activeTab === tab.key ? '#FFD700' : 'transparent',
                             color: activeTab === tab.key ? '#0A0A0A' : '#AAAAAA',
                             border: '1px solid', borderColor: activeTab === tab.key ? '#FFD700' : 'rgba(255,215,0,0.2)',
                             cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px',
-                            transition: 'all 0.2s', borderRadius: 0,
+                            transition: 'all 0.2s',
                         }}>
                             {tab.icon} {tab.label}
                         </button>
                     ))}
                 </div>
 
+                {/* Users Table */}
                 {activeTab === 'users' && (
-                    <div style={{ overflowX: 'auto' }}>
-                        <Table className="sf-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
-                                    <th>Status</th>
-                                    <th>Joined</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {users.map((u) => (
-                                    <tr key={u.id}>
-                                        <td style={{ fontFamily: 'Rajdhani', fontWeight: 600 }}>{u.first_name} {u.last_name}</td>
-                                        <td style={{ color: '#AAAAAA', fontSize: '0.9rem' }}>{u.email}</td>
-                                        <td style={{ color: '#AAAAAA', fontSize: '0.9rem' }}>{u.phone || '-'}</td>
-                                        <td><span className={u.is_verified ? 'badge-verified' : 'badge-unverified'}>{u.is_verified ? 'Verified' : 'Unverified'}</span></td>
-                                        <td style={{ color: '#AAAAAA', fontSize: '0.85rem' }}>{new Date(u.created_at).toLocaleDateString()}</td>
-                                        <td>
-                                            <button onClick={() => handleDeleteUser(u.id)} style={{
-                                                background: 'transparent', border: '1px solid rgba(255,215,0,0.2)', color: '#AAAAAA',
-                                                padding: '5px 12px', display: 'flex', alignItems: 'center', gap: '5px',
-                                                fontFamily: 'Rajdhani', fontWeight: 600, fontSize: '0.8rem', cursor: 'pointer',
-                                                transition: 'all 0.2s', borderRadius: 0,
-                                            }}
-                                            onMouseEnter={e => { e.currentTarget.style.borderColor = '#FF4444'; e.currentTarget.style.color = '#FF4444'; }}
-                                            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(255,215,0,0.2)'; e.currentTarget.style.color = '#AAAAAA'; }}
-                                            >
-                                                <FiTrash2 size={12} /> Delete
-                                            </button>
-                                        </td>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid rgba(255,215,0,0.2)' }}>
+                                        {['Name', 'Email', 'Username', 'Status', 'Joined', 'Actions'].map(h => (
+                                            <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontFamily: 'Rajdhani', fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#AAAAAA' }}>{h}</th>
+                                        ))}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                        {users.length === 0 && <p className="text-dim text-center py-4">No users found.</p>}
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {users.map((u) => (
+                                        <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,215,0,0.08)', transition: 'background 0.2s' }}
+                                            onMouseEnter={e => e.currentTarget.style.background = '#111111'}
+                                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                            <td style={{ padding: '14px 16px', fontFamily: 'Rajdhani', fontWeight: 600, color: '#FFFFFF' }}>{u.first_name} {u.last_name}</td>
+                                            <td style={{ padding: '14px 16px', color: '#AAAAAA', fontSize: '0.9rem' }}>{u.email}</td>
+                                            <td style={{ padding: '14px 16px', color: '#FFD700', fontSize: '0.9rem', fontFamily: 'Rajdhani' }}>{u.username || '-'}</td>
+                                            <td style={{ padding: '14px 16px' }}>
+                                                <span className={u.is_verified ? 'badge-verified' : 'badge-unverified'}>
+                                                    {u.is_verified ? 'Verified' : 'Unverified'}
+                                                </span>
+                                            </td>
+                                            <td style={{ padding: '14px 16px', color: '#AAAAAA', fontSize: '0.85rem' }}>
+                                                {new Date(u.created_at).toLocaleDateString()}
+                                            </td>
+                                            <td style={{ padding: '14px 16px' }}>
+                                                <motion.button
+                                                    whileHover={{ scale: 1.05 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={() => handleDeleteUser(u.id)}
+                                                    style={{
+                                                        background: 'transparent', border: '1px solid rgba(255,68,68,0.3)',
+                                                        color: '#FF4444', padding: '5px 12px', display: 'flex',
+                                                        alignItems: 'center', gap: '5px', fontFamily: 'Rajdhani',
+                                                        fontWeight: 600, fontSize: '0.8rem', cursor: 'pointer',
+                                                    }}
+                                                >
+                                                    <FiTrash2 size={12} /> Delete
+                                                </motion.button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {users.length === 0 && <p style={{ color: '#AAAAAA', textAlign: 'center', padding: '40px' }}>No users found.</p>}
+                        </div>
+                    </motion.div>
                 )}
 
+                {/* Stats Table */}
                 {activeTab === 'stats' && (
-                    <div style={{ overflowX: 'auto' }}>
-                        <Table className="sf-table">
-                            <thead>
-                                <tr>
-                                    <th>Player</th>
-                                    <th>Game</th>
-                                    <th>Kills</th>
-                                    <th>Deaths</th>
-                                    <th>Wins</th>
-                                    <th>K/D</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {stats.map((s) => (
-                                    <tr key={s.id}>
-                                        <td style={{ fontFamily: 'Rajdhani', fontWeight: 600 }}>{s.player_game?.gaming_id}</td>
-                                        <td style={{ color: '#AAAAAA' }}>{s.player_game?.game?.name}</td>
-                                        <td>{s.kills}</td>
-                                        <td>{s.deaths}</td>
-                                        <td>{s.wins}</td>
-                                        <td style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>{s.kd_ratio}</td>
-                                        <td><span className={s.status === 'approved' ? 'badge-approved' : 'badge-pending'}>{s.status}</span></td>
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+                        <div style={{ overflowX: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                                <thead>
+                                    <tr style={{ borderBottom: '1px solid rgba(255,215,0,0.2)' }}>
+                                        {['Player', 'Game', 'Kills', 'Deaths', 'Wins', 'K/D', 'Status'].map(h => (
+                                            <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontFamily: 'Rajdhani', fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#AAAAAA' }}>{h}</th>
+                                        ))}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-                        {stats.length === 0 && <p className="text-dim text-center py-4">No stats found.</p>}
-                    </div>
+                                </thead>
+                                <tbody>
+                                    {stats.map((s) => (
+                                        <tr key={s.id} style={{ borderBottom: '1px solid rgba(255,215,0,0.08)', transition: 'background 0.2s' }}
+                                            onMouseEnter={e => e.currentTarget.style.background = '#111111'}
+                                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                        >
+                                            <td style={{ padding: '14px 16px', fontFamily: 'Rajdhani', fontWeight: 600, color: '#FFFFFF' }}>{s.player_game?.gaming_id}</td>
+                                            <td style={{ padding: '14px 16px', color: '#AAAAAA' }}>{s.player_game?.game?.name}</td>
+                                            <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.kills}</td>
+                                            <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.deaths}</td>
+                                            <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.wins}</td>
+                                            <td style={{ padding: '14px 16px', color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>{s.kd_ratio}</td>
+                                            <td style={{ padding: '14px 16px' }}>
+                                                <span className={s.status === 'approved' ? 'badge-approved' : 'badge-pending'}>{s.status}</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {stats.length === 0 && <p style={{ color: '#AAAAAA', textAlign: 'center', padding: '40px' }}>No stats found.</p>}
+                        </div>
+                    </motion.div>
                 )}
-            </Container>
+            </div>
         </div>
     );
 };
