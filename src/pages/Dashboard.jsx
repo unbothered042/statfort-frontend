@@ -31,7 +31,7 @@ const GAME_OPTIONS = [
         color: '#16A34A',
         glow: 'rgba(22,163,74,0.3)',
         border: 'rgba(22,163,74,0.5)',
-        logo: '🎯',
+        logo: 🟢'',
     },
 ];
 
