@@ -6,39 +6,15 @@ import { useAuth } from '../context/AuthContext';
 import { FiRefreshCw, FiZap, FiTrash2, FiInfo, FiUpload, FiTarget, FiAward } from 'react-icons/fi';
 
 const GAME_OPTIONS = [
-    {
-        id: null,
-        name: 'Fortnite',
-        slug: 'fortnite',
-        color: '#7C3AED',
-        glow: 'rgba(124,58,237,0.3)',
-        border: 'rgba(124,58,237,0.5)',
-        logo: '⚡',
-    },
-    {
-        id: null,
-        name: 'Apex Legends',
-        slug: 'apex-legends',
-        color: '#DC2626',
-        glow: 'rgba(220,38,38,0.3)',
-        border: 'rgba(220,38,38,0.5)',
-        logo: '🔴',
-    },
-    {
-        id: null,
-        name: 'COD Mobile',
-        slug: 'cod-mobile',
-        color: '#16A34A',
-        glow: 'rgba(22,163,74,0.3)',
-        border: 'rgba(22,163,74,0.5)',
-        logo: '🟢',
-    },
+    { name: 'Fortnite', slug: 'fortnite', color: '#7C3AED', glow: 'rgba(124,58,237,0.3)', border: 'rgba(124,58,237,0.5)', logo: '⚡' },
+    { name: 'Apex Legends', slug: 'apex-legends', color: '#DC2626', glow: 'rgba(220,38,38,0.3)', border: 'rgba(220,38,38,0.5)', logo: '🔴' },
+    { name: 'COD Mobile', slug: 'cod-mobile', color: '#16A34A', glow: 'rgba(22,163,74,0.3)', border: 'rgba(22,163,74,0.5)', logo: '🟢' },
 ];
 
 const GAME_COLORS = {
-    'fortnite': { color: '#7C3AED', glow: 'rgba(124,58,237,0.2)', border: 'rgba(124,58,237,0.4)' },
-    'apex-legends': { color: '#DC2626', glow: 'rgba(220,38,38,0.2)', border: 'rgba(220,38,38,0.4)' },
-    'cod-mobile': { color: '#16A34A', glow: 'rgba(22,163,74,0.2)', border: 'rgba(22,163,74,0.4)' },
+    'fortnite': { color: '#7C3AED', glow: 'rgba(124,58,237,0.15)', border: 'rgba(124,58,237,0.4)' },
+    'apex-legends': { color: '#DC2626', glow: 'rgba(220,38,38,0.15)', border: 'rgba(220,38,38,0.4)' },
+    'cod-mobile': { color: '#16A34A', glow: 'rgba(22,163,74,0.15)', border: 'rgba(22,163,74,0.4)' },
 };
 
 const KDBar = ({ kd, maxKd = 5 }) => {
@@ -84,20 +60,16 @@ const WinRateBar = ({ winRate }) => {
 
 const ScannerUpload = ({ onFile, fileName }) => {
     const [scanning, setScanning] = useState(false);
-
     return (
         <div style={{ position: 'relative', overflow: 'hidden' }}>
-            <div style={{
-                border: '2px dashed rgba(22,163,74,0.4)',
-                padding: '32px 20px',
-                textAlign: 'center',
-                cursor: 'pointer',
-                position: 'relative',
-                background: 'rgba(22,163,74,0.03)',
-                transition: 'all 0.3s',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(22,163,74,0.8)'; setScanning(true); }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(22,163,74,0.4)'; setScanning(false); }}
+            <div
+                style={{
+                    border: '2px dashed rgba(22,163,74,0.4)', padding: '32px 20px',
+                    textAlign: 'center', cursor: 'pointer', position: 'relative',
+                    background: 'rgba(22,163,74,0.03)', transition: 'all 0.3s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(22,163,74,0.8)'; setScanning(true); }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(22,163,74,0.4)'; setScanning(false); }}
             >
                 {scanning && (
                     <motion.div
@@ -107,8 +79,7 @@ const ScannerUpload = ({ onFile, fileName }) => {
                         style={{
                             position: 'absolute', left: 0, right: 0, height: '2px',
                             background: 'linear-gradient(90deg, transparent, #16A34A, transparent)',
-                            boxShadow: '0 0 8px rgba(22,163,74,0.8)',
-                            pointerEvents: 'none',
+                            boxShadow: '0 0 8px rgba(22,163,74,0.8)', pointerEvents: 'none',
                         }}
                     />
                 )}
@@ -116,15 +87,9 @@ const ScannerUpload = ({ onFile, fileName }) => {
                 <p style={{ color: '#AAAAAA', fontSize: '0.88rem', marginBottom: '4px', fontFamily: 'Rajdhani', fontWeight: 600, letterSpacing: '0.05em' }}>
                     DROP SCREENSHOT OR CLICK TO SCAN
                 </p>
-                <p style={{ color: '#555555', fontSize: '0.78rem' }}>AI verification will analyze your stats automatically</p>
-                <input
-                    type="file" accept="image/*" required
-                    onChange={(e) => onFile(e.target.files[0])}
-                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
-                />
-                {fileName && (
-                    <p style={{ color: '#16A34A', fontSize: '0.85rem', marginTop: '8px', fontFamily: 'Rajdhani', fontWeight: 700 }}>{fileName}</p>
-                )}
+                <p style={{ color: '#555555', fontSize: '0.78rem', margin: 0 }}>AI verification will analyze your stats automatically</p>
+                <input type="file" accept="image/*" required onChange={(e) => onFile(e.target.files[0])} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
+                {fileName && <p style={{ color: '#16A34A', fontSize: '0.85rem', marginTop: '8px', fontFamily: 'Rajdhani', fontWeight: 700, marginBottom: 0 }}>{fileName}</p>}
             </div>
         </div>
     );
@@ -278,17 +243,14 @@ const Dashboard = () => {
                     style={{
                         background: 'linear-gradient(135deg, #1A1A1A 0%, #111111 100%)',
                         border: '1px solid rgba(255,215,0,0.2)',
-                        padding: '32px',
-                        marginBottom: '32px',
-                        position: 'relative',
-                        overflow: 'hidden',
+                        padding: '32px', marginBottom: '32px',
+                        position: 'relative', overflow: 'hidden',
                     }}
                 >
                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #FFD700, #FFA500, transparent)' }} />
                     <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(255,215,0,0.04) 0%, transparent 70%)', borderRadius: '50%' }} />
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
-                        {/* Avatar */}
                         <div style={{ position: 'relative', flexShrink: 0 }}>
                             <motion.div
                                 animate={{ boxShadow: ['0 0 20px rgba(255,215,0,0.3)', '0 0 40px rgba(255,215,0,0.6)', '0 0 20px rgba(255,215,0,0.3)'] }}
@@ -304,22 +266,19 @@ const Dashboard = () => {
                                     {user?.first_name?.[0]?.toUpperCase()}
                                 </span>
                             </motion.div>
-                            <div style={{
-                                position: 'absolute', bottom: '4px', right: '4px',
-                                width: '14px', height: '14px', borderRadius: '50%',
-                                background: '#00CC66', border: '2px solid #0A0A0A',
-                            }} />
+                            <div style={{ position: 'absolute', bottom: '4px', right: '4px', width: '14px', height: '14px', borderRadius: '50%', background: '#00CC66', border: '2px solid #0A0A0A' }} />
                         </div>
 
-                        {/* Name and rank */}
                         <div style={{ flex: 1 }}>
                             <p style={{ color: '#AAAAAA', fontSize: '0.8rem', fontFamily: 'Rajdhani', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '4px' }}>Player Profile</p>
                             <h1 style={{ fontSize: '2.2rem', marginBottom: '4px', fontStyle: 'italic' }}>
                                 WELCOME, <span style={{ color: '#FFD700' }}>{user?.first_name?.toUpperCase()}</span>
                             </h1>
+                            {user?.username && (
+                                <p style={{ color: '#AAAAAA', fontSize: '0.9rem', fontFamily: 'Rajdhani', marginBottom: '8px' }}>@{user.username}</p>
+                            )}
                             <div style={{ width: '60px', height: '3px', background: '#FFD700', marginBottom: '16px' }} />
 
-                            {/* Quick stats bar */}
                             {stats.length > 0 && (
                                 <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
                                     {[
@@ -349,11 +308,10 @@ const Dashboard = () => {
                     style={{ background: '#111111', border: '1px solid rgba(255,215,0,0.15)', padding: '32px', marginBottom: '32px' }}
                 >
                     <h2 style={{ fontSize: '1.4rem', marginBottom: '8px', fontStyle: 'italic' }}>
-                        SELECT <span style={{ color: '#FFD700' }}>MISSION</span>
+                        SELECT <span style={{ color: '#FFD700' }}>GAME</span>
                     </h2>
                     <p style={{ color: '#AAAAAA', fontSize: '0.85rem', marginBottom: '24px' }}>Choose a game to add to your profile</p>
 
-                    {/* Game tiles */}
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '24px' }}>
                         {GAME_OPTIONS.map((game) => {
                             const isSelected = selectedGame?.slug === game.slug;
@@ -366,24 +324,15 @@ const Dashboard = () => {
                                     style={{
                                         background: isSelected ? game.glow : 'rgba(255,255,255,0.02)',
                                         border: `1px solid ${isSelected ? game.color : 'rgba(255,255,255,0.08)'}`,
-                                        padding: '20px 12px',
-                                        cursor: 'pointer',
-                                        textAlign: 'center',
+                                        padding: '20px 12px', cursor: 'pointer', textAlign: 'center',
                                         transition: 'all 0.2s',
                                         boxShadow: isSelected ? `0 0 20px ${game.glow}` : 'none',
-                                        position: 'relative',
-                                        overflow: 'hidden',
+                                        position: 'relative', overflow: 'hidden',
                                     }}
                                 >
-                                    {isSelected && (
-                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: game.color }} />
-                                    )}
+                                    {isSelected && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: game.color }} />}
                                     <p style={{ fontSize: '1.8rem', marginBottom: '6px' }}>{game.logo}</p>
-                                    <p style={{
-                                        fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.85rem',
-                                        letterSpacing: '0.08em', textTransform: 'uppercase',
-                                        color: isSelected ? game.color : '#AAAAAA', margin: 0,
-                                    }}>
+                                    <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? game.color : '#AAAAAA', margin: 0 }}>
                                         {game.name}
                                     </p>
                                 </motion.button>
@@ -409,10 +358,7 @@ const Dashboard = () => {
                                         value={gamingId}
                                         onChange={(e) => setGamingId(e.target.value)}
                                         required
-                                        style={{
-                                            boxShadow: `0 0 0 1px ${selectedGame.color}22, inset 0 0 20px ${selectedGame.glow}`,
-                                            borderColor: selectedGame.border,
-                                        }}
+                                        style={{ boxShadow: `inset 0 0 20px ${selectedGame.glow}`, borderColor: selectedGame.border }}
                                     />
                                 </div>
 
@@ -427,8 +373,8 @@ const Dashboard = () => {
                                     </div>
                                 )}
 
-                                {addError && <p className="error-msg mb-3">{addError}</p>}
-                                {addSuccess && <p className="success-msg mb-3">{addSuccess}</p>}
+                                {addError && <p className="error-msg" style={{ marginBottom: '12px' }}>{addError}</p>}
+                                {addSuccess && <p className="success-msg" style={{ marginBottom: '12px' }}>{addSuccess}</p>}
 
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
@@ -479,9 +425,7 @@ const Dashboard = () => {
                                     style={{
                                         background: 'linear-gradient(135deg, #1A1A1A 0%, #111111 100%)',
                                         border: `1px solid ${gc.border}`,
-                                        padding: '28px',
-                                        position: 'relative',
-                                        overflow: 'hidden',
+                                        padding: '28px', position: 'relative', overflow: 'hidden',
                                     }}
                                 >
                                     <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: `linear-gradient(90deg, ${gc.color}, transparent)` }} />
@@ -490,18 +434,20 @@ const Dashboard = () => {
                                     {/* Header */}
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                            {isApiGame && (
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                    <motion.div
-                                                        animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
-                                                        transition={{ duration: 1.5, repeat: Infinity }}
-                                                        style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#00CC66', flexShrink: 0 }}
-                                                    />
-                                                    <span style={{ fontSize: '0.7rem', color: '#00CC66', fontFamily: 'Rajdhani', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Live Sync</span>
-                                                </div>
-                                            )}
                                             <div>
-                                                <h3 style={{ fontSize: '1.5rem', marginBottom: '2px', fontStyle: 'italic' }}>{pg.game.name}</h3>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                                    <h3 style={{ fontSize: '1.5rem', margin: 0, fontStyle: 'italic' }}>{pg.game.name}</h3>
+                                                    {isApiGame && (
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                                            <motion.div
+                                                                animate={{ scale: [1, 1.3, 1], opacity: [1, 0.7, 1] }}
+                                                                transition={{ duration: 1.5, repeat: Infinity }}
+                                                                style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#00CC66', flexShrink: 0 }}
+                                                            />
+                                                            <span style={{ fontSize: '0.7rem', color: '#00CC66', fontFamily: 'Rajdhani', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Live</span>
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 <p style={{ color: gc.color, fontSize: '0.9rem', fontFamily: 'Rajdhani', margin: 0 }}>{pg.gaming_id}</p>
                                             </div>
                                         </div>
@@ -511,11 +457,7 @@ const Dashboard = () => {
                                                 <select
                                                     value={platform[pg.id] || 'PC'}
                                                     onChange={(e) => setPlatform({ ...platform, [pg.id]: e.target.value })}
-                                                    style={{
-                                                        background: '#222222', border: '1px solid rgba(255,255,255,0.1)',
-                                                        color: '#AAAAAA', padding: '6px 10px', fontSize: '0.8rem',
-                                                        fontFamily: 'Rajdhani', cursor: 'pointer',
-                                                    }}
+                                                    style={{ background: '#222222', border: '1px solid rgba(255,255,255,0.1)', color: '#AAAAAA', padding: '6px 10px', fontSize: '0.8rem', fontFamily: 'Rajdhani', cursor: 'pointer' }}
                                                 >
                                                     <option value="PC">PC</option>
                                                     <option value="PS4">PlayStation</option>
@@ -535,7 +477,7 @@ const Dashboard = () => {
                                                         letterSpacing: '0.05em', cursor: 'pointer', textTransform: 'uppercase',
                                                     }}
                                                 >
-                                                    <FiRefreshCw size={13} style={{ animation: fetchingStats[pg.id] ? 'spin 1s linear infinite' : 'none' }} />
+                                                    <FiRefreshCw size={13} />
                                                     {fetchingStats[pg.id] ? 'Syncing...' : 'Sync'}
                                                 </motion.button>
                                             )}
@@ -559,13 +501,25 @@ const Dashboard = () => {
                                     {isApiGame && (
                                         <div style={{
                                             display: 'flex', alignItems: 'flex-start', gap: '10px',
-                                            background: `${gc.glow}`, border: `1px solid ${gc.border}`,
-                                            borderLeft: `3px solid ${gc.color}`, padding: '10px 14px', marginBottom: '20px',
+                                            background: gc.glow, border: `1px solid ${gc.border}`,
+                                            borderLeft: `3px solid ${gc.color}`, padding: '12px 14px', marginBottom: '20px',
                                         }}>
                                             <FiInfo size={15} style={{ color: gc.color, marginTop: '2px', flexShrink: 0 }} />
-                                            <p style={{ color: '#AAAAAA', fontSize: '0.85rem', lineHeight: 1.6, margin: 0 }}>
-                                                Your <strong style={{ color: gc.color }}>{pg.game.name}</strong> account must have <strong style={{ color: gc.color }}>public stats</strong> enabled for sync to work.
-                                            </p>
+                                            <div>
+                                                <p style={{ color: gc.color, fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.82rem', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '6px' }}>
+                                                    Public Stats Required
+                                                </p>
+                                                {pg.game.slug === 'fortnite' && (
+                                                    <p style={{ color: '#AAAAAA', fontSize: '0.82rem', lineHeight: 1.6, margin: 0 }}>
+                                                        Go to <strong style={{ color: '#FFFFFF' }}>epicgames.com</strong>, sign in, open <strong style={{ color: '#FFFFFF' }}>Account Settings</strong>, click the <strong style={{ color: '#FFFFFF' }}>Fortnite</strong> tab, and set <strong style={{ color: gc.color }}>Career Leaderboard</strong> to <strong style={{ color: gc.color }}>Public</strong>.
+                                                    </p>
+                                                )}
+                                                {pg.game.slug === 'apex-legends' && (
+                                                    <p style={{ color: '#AAAAAA', fontSize: '0.82rem', lineHeight: 1.6, margin: 0 }}>
+                                                        Open <strong style={{ color: '#FFFFFF' }}>Apex Legends</strong>, go to <strong style={{ color: '#FFFFFF' }}>Settings</strong>, open the <strong style={{ color: '#FFFFFF' }}>Gameplay</strong> tab, and enable <strong style={{ color: gc.color }}>Public Profile</strong>. Your Origin/EA username must match exactly.
+                                                    </p>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
 
@@ -592,13 +546,11 @@ const Dashboard = () => {
                                                 ))}
                                             </div>
 
-                                            {/* Progress bars */}
                                             <div style={{ marginBottom: '20px' }}>
                                                 <KDBar kd={gameStats.kd_ratio} />
                                                 <WinRateBar winRate={gameStats.win_rate} />
                                             </div>
 
-                                            {/* AI Insight */}
                                             <motion.button
                                                 whileHover={{ scale: 1.02, boxShadow: '0 4px 20px rgba(255,215,0,0.15)' }}
                                                 whileTap={{ scale: 0.98 }}
@@ -612,9 +564,7 @@ const Dashboard = () => {
                                                     marginBottom: '16px', width: 'fit-content',
                                                 }}
                                             >
-                                                <motion.span animate={fetchingInsight[pg.id] ? { rotate: 360 } : {}} transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}>
-                                                    <FiZap size={14} />
-                                                </motion.span>
+                                                <FiZap size={14} />
                                                 {fetchingInsight[pg.id] ? 'Generating Insight...' : 'Get AI Coaching Insight'}
                                             </motion.button>
 
@@ -624,10 +574,7 @@ const Dashboard = () => {
                                                         initial={{ opacity: 0, y: 10 }}
                                                         animate={{ opacity: 1, y: 0 }}
                                                         exit={{ opacity: 0, y: -10 }}
-                                                        style={{
-                                                            background: '#222222', border: '1px solid rgba(255,215,0,0.15)',
-                                                            padding: '16px 20px', borderLeft: '3px solid #FFD700',
-                                                        }}
+                                                        style={{ background: '#222222', border: '1px solid rgba(255,215,0,0.15)', padding: '16px 20px', borderLeft: '3px solid #FFD700' }}
                                                     >
                                                         <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '10px' }}>AI Coach Insight</p>
                                                         <p style={{ color: '#AAAAAA', lineHeight: 1.7, fontSize: '0.92rem', whiteSpace: 'pre-line', margin: 0 }}>{insights[pg.id]}</p>
