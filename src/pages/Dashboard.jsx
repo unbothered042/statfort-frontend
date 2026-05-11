@@ -587,7 +587,7 @@ const Dashboard = () => {
                                             {pg.game.slug === 'cod-mobile' && (
                                                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                                                     <p style={{ color: '#AAAAAA', fontSize: '0.88rem', marginBottom: '20px' }}>
-                                                        Submit your COD Mobile stats below. AI will verify your screenshot automatically.
+                                                        Submit your COD Mobile stats below. Our AI will verify your stats automatically through your screenshot.
                                                     </p>
                                                     <form onSubmit={(e) => handleCodSubmit(e, pg.id)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                                                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
