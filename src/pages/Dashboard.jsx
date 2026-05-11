@@ -6,9 +6,9 @@ import { useAuth } from '../context/AuthContext';
 import { FiRefreshCw, FiZap, FiTrash2, FiInfo, FiUpload, FiTarget, FiAward } from 'react-icons/fi';
 
 const GAME_OPTIONS = [
-    { name: 'Fortnite', slug: 'fortnite', color: '#7C3AED', glow: 'rgba(124,58,237,0.3)', border: 'rgba(124,58,237,0.5)', logo: '⚡' },
-    { name: 'Apex Legends', slug: 'apex-legends', color: '#DC2626', glow: 'rgba(220,38,38,0.3)', border: 'rgba(220,38,38,0.5)', logo: '🔴' },
-    { name: 'COD Mobile', slug: 'cod-mobile', color: '#16A34A', glow: 'rgba(22,163,74,0.3)', border: 'rgba(22,163,74,0.5)', logo: '🟢' },
+    { name: 'Fortnite', slug: 'fortnite', color: '#7C3AED', glow: 'rgba(124,58,237,0.3)', border: 'rgba(124,58,237,0.5)', image: '/fortnite.jpg' },
+    { name: 'Apex Legends', slug: 'apex-legends', color: '#DC2626', glow: 'rgba(220,38,38,0.3)', border: 'rgba(220,38,38,0.5)', image: '/apex.jpg' },
+    { name: 'COD Mobile', slug: 'cod-mobile', color: '#16A34A', glow: 'rgba(22,163,74,0.3)', border: 'rgba(22,163,74,0.5)', image: '/cod.jpg' },
 ];
 
 const GAME_COLORS = {
@@ -322,19 +322,57 @@ const Dashboard = () => {
                                     whileTap={{ scale: 0.97 }}
                                     onClick={() => setSelectedGame(isSelected ? null : game)}
                                     style={{
-                                        background: isSelected ? game.glow : 'rgba(255,255,255,0.02)',
+                                        background: 'transparent',
                                         border: `1px solid ${isSelected ? game.color : 'rgba(255,255,255,0.08)'}`,
-                                        padding: '20px 12px', cursor: 'pointer', textAlign: 'center',
+                                        padding: '0',
+                                        cursor: 'pointer',
+                                        textAlign: 'center',
                                         transition: 'all 0.2s',
                                         boxShadow: isSelected ? `0 0 20px ${game.glow}` : 'none',
-                                        position: 'relative', overflow: 'hidden',
+                                        position: 'relative',
+                                        overflow: 'hidden',
+                                        height: '140px',
                                     }}
                                 >
-                                    {isSelected && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: game.color }} />}
-                                    <p style={{ fontSize: '1.8rem', marginBottom: '6px' }}>{game.logo}</p>
-                                    <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: isSelected ? game.color : '#AAAAAA', margin: 0 }}>
-                                        {game.name}
-                                    </p>
+                                    {isSelected && (
+                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: game.color, zIndex: 2 }} />
+                                    )}
+                                    <img
+                                        src={game.image}
+                                        alt={game.name}
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            objectFit: 'cover',
+                                            display: 'block',
+                                            filter: isSelected ? 'brightness(0.7)' : 'brightness(0.4)',
+                                            transition: 'filter 0.3s',
+                                        }}
+                                    />
+                                    <div style={{
+                                        position: 'absolute',
+                                        inset: 0,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center',
+                                        justifyContent: 'flex-end',
+                                        padding: '12px',
+                                        background: isSelected
+                                            ? `linear-gradient(to top, ${game.color}88, transparent)`
+                                            : 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                                    }}>
+                                        <p style={{
+                                            fontFamily: 'Rajdhani',
+                                            fontWeight: 700,
+                                            fontSize: '0.85rem',
+                                            letterSpacing: '0.1em',
+                                            textTransform: 'uppercase',
+                                            color: isSelected ? game.color : '#FFFFFF',
+                                            margin: 0,
+                                        }}>
+                                            {game.name}
+                                        </p>
+                                    </div>
                                 </motion.button>
                             );
                         })}
@@ -415,6 +453,7 @@ const Dashboard = () => {
                             const gameStats = getStatsForGame(pg.id);
                             const isApiGame = pg.game.slug === 'fortnite' || pg.game.slug === 'apex-legends';
                             const gc = GAME_COLORS[pg.game.slug] || { color: '#FFD700', glow: 'rgba(255,215,0,0.15)', border: 'rgba(255,215,0,0.3)' };
+                            const gameOption = GAME_OPTIONS.find(g => g.slug === pg.game.slug);
 
                             return (
                                 <motion.div
@@ -433,7 +472,20 @@ const Dashboard = () => {
 
                                     {/* Header */}
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                            {gameOption && (
+                                                <div style={{
+                                                    width: '56px', height: '56px', borderRadius: '8px',
+                                                    overflow: 'hidden', flexShrink: 0,
+                                                    border: `1px solid ${gc.border}`,
+                                                }}>
+                                                    <img
+                                                        src={gameOption.image}
+                                                        alt={pg.game.name}
+                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                    />
+                                                </div>
+                                            )}
                                             <div>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                                     <h3 style={{ fontSize: '1.5rem', margin: 0, fontStyle: 'italic' }}>{pg.game.name}</h3>
