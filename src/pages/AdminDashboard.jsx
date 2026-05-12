@@ -151,7 +151,7 @@ const AdminDashboard = () => {
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
                                     <tr style={{ borderBottom: '1px solid rgba(255,215,0,0.2)' }}>
-                                        {['Name', 'Email', 'Username', 'Status', 'Joined', 'Actions'].map(h => (
+                                        {['Name', 'Email', 'Username', 'State', 'Status', 'Joined', 'Actions'].map(h => (
                                             <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontFamily: 'Rajdhani', fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#AAAAAA' }}>{h}</th>
                                         ))}
                                     </tr>
@@ -166,6 +166,7 @@ const AdminDashboard = () => {
                                             <td style={{ padding: '14px 16px', color: '#AAAAAA', fontSize: '0.9rem' }}>{u.email}</td>
                                             <td style={{ padding: '14px 16px', color: '#FFD700', fontSize: '0.9rem', fontFamily: 'Rajdhani' }}>{u.username || '-'}</td>
                                             <td style={{ padding: '14px 16px' }}>
+                                            <td style={{ padding: '14px 16px', color: '#FFD700', fontSize: '0.9rem', fontFamily: 'Rajdhani' }}>{u.state || '-'}</td>
                                                 <span className={u.is_verified ? 'badge-verified' : 'badge-unverified'}>
                                                     {u.is_verified ? 'Verified' : 'Unverified'}
                                                 </span>
