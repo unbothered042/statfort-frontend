@@ -4,9 +4,21 @@ import { motion } from 'framer-motion';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 
+const NIGERIAN_STATES = [
+    'Abia', 'Adamawa', 'Akwa Ibom', 'Anambra', 'Bauchi', 'Bayelsa',
+    'Benue', 'Borno', 'Cross River', 'Delta', 'Ebonyi', 'Edo',
+    'Ekiti', 'Enugu', 'FCT', 'Gombe', 'Imo', 'Jigawa',
+    'Kaduna', 'Kano', 'Katsina', 'Kebbi', 'Kogi', 'Kwara',
+    'Lagos', 'Nasarawa', 'Niger', 'Ogun', 'Ondo', 'Osun',
+    'Oyo', 'Plateau', 'Rivers', 'Sokoto', 'Taraba', 'Yobe', 'Zamfara',
+];
+
 const Register = () => {
     const navigate = useNavigate();
-    const [form, setForm] = useState({ first_name: '', last_name: '', email: '', username: '', password: '' });
+    const [form, setForm] = useState({
+        first_name: '', last_name: '', email: '',
+        username: '', state: '', password: '',
+    });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -70,6 +82,16 @@ const Register = () => {
                                 <label className="sf-label">Username</label>
                                 <input className="sf-input" name="username" placeholder="ShadowKing_NG" value={form.username} onChange={handleChange} required />
                                 <p style={{ color: '#555555', fontSize: '0.78rem', marginTop: '4px' }}>Your public display name on the leaderboard</p>
+                            </div>
+                            <div>
+                                <label className="sf-label">State</label>
+                                <select className="sf-select" name="state" value={form.state} onChange={handleChange} required>
+                                    <option value="">Select your state</option>
+                                    {NIGERIAN_STATES.map(s => (
+                                        <option key={s} value={s}>{s === 'FCT' ? 'FCT - Abuja' : s}</option>
+                                    ))}
+                                </select>
+                                <p style={{ color: '#555555', fontSize: '0.78rem', marginTop: '4px' }}>Shown on the leaderboard to represent your state</p>
                             </div>
                             <div>
                                 <label className="sf-label">Password</label>
