@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
-import { FiRefreshCw, FiZap, FiTrash2, FiInfo, FiUpload, FiTarget, FiAward } from 'react-icons/fi';
+import { FiRefreshCw, FiZap, FiTrash2, FiInfo, FiUpload, FiTarget, FiAward, FiLock } from 'react-icons/fi';
 
 const GAME_OPTIONS = [
     { name: 'Fortnite', slug: 'fortnite', color: '#7C3AED', glow: 'rgba(124,58,237,0.3)', border: 'rgba(124,58,237,0.5)', image: '/fortnite.jpg' },
@@ -95,12 +95,43 @@ const ScannerUpload = ({ onFile, fileName }) => {
     );
 };
 
+const AILimitBanner = ({ error, isPremium }) => {
+    if (!error) return null;
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+                background: 'rgba(255,68,68,0.06)',
+                border: '1px solid rgba(255,68,68,0.3)',
+                borderLeft: '3px solid #FF4444',
+                padding: '14px 16px',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: '10px',
+            }}
+        >
+            <FiLock size={16} style={{ color: '#FF4444', marginTop: '2px', flexShrink: 0 }} />
+            <div>
+                <p style={{ color: '#FF4444', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: '4px' }}>
+                    Daily AI Limit Reached
+                </p>
+                <p style={{ color: '#AAAAAA', fontSize: '0.83rem', margin: 0, lineHeight: 1.5 }}>
+                    {error} {!isPremium && <span style={{ color: '#FFD700' }}>Upgrade to Premium for 20 uses per day.</span>}
+                </p>
+            </div>
+        </motion.div>
+    );
+};
+
 const Dashboard = () => {
     const { user } = useAuth();
     const [games, setGames] = useState([]);
     const [myGames, setMyGames] = useState([]);
     const [stats, setStats] = useState([]);
     const [insights, setInsights] = useState({});
+    const [insightError, setInsightError] = useState({});
     const [loading, setLoading] = useState(true);
     const [selectedGame, setSelectedGame] = useState(null);
     const [gamingId, setGamingId] = useState('');
@@ -109,6 +140,7 @@ const Dashboard = () => {
     const [addingGame, setAddingGame] = useState(false);
     const [fetchingStats, setFetchingStats] = useState({});
     const [fetchingInsight, setFetchingInsight] = useState({});
+    const [aiUsage, setAiUsage] = useState({ count: user?.ai_insight_count || 0, limit: user?.ai_limit || 5 });
     const [codForm, setCodForm] = useState({});
     const [codLoading, setCodLoading] = useState({});
     const [codError, setCodError] = useState({});
@@ -178,11 +210,20 @@ const Dashboard = () => {
 
     const handleGenerateInsight = async (playerGameId) => {
         setFetchingInsight({ ...fetchingInsight, [playerGameId]: true });
+        setInsightError({ ...insightError, [playerGameId]: '' });
         try {
             const res = await API.post(`/insights/${playerGameId}/`);
             setInsights({ ...insights, [playerGameId]: res.data.content });
-        } catch (err) { console.error(err); }
-        finally { setFetchingInsight({ ...fetchingInsight, [playerGameId]: false }); }
+            setAiUsage({ count: res.data.ai_insight_count, limit: res.data.ai_limit });
+        } catch (err) {
+            if (err.response?.status === 429) {
+                setInsightError({ ...insightError, [playerGameId]: err.response.data.error });
+            } else {
+                console.error(err);
+            }
+        } finally {
+            setFetchingInsight({ ...fetchingInsight, [playerGameId]: false });
+        }
     };
 
     const handleCodSubmit = async (e, playerGameId) => {
@@ -218,6 +259,7 @@ const Dashboard = () => {
     const totalWins = stats.reduce((sum, s) => sum + (s.wins || 0), 0);
     const totalKills = stats.reduce((sum, s) => sum + (s.kills || 0), 0);
     const bestKD = stats.length > 0 ? Math.max(...stats.map(s => s.kd_ratio || 0)) : 0;
+    const isPremium = user?.is_premium;
 
     if (loading) return (
         <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
@@ -270,7 +312,19 @@ const Dashboard = () => {
                         </div>
 
                         <div style={{ flex: 1 }}>
-                            <p style={{ color: '#AAAAAA', fontSize: '0.8rem', fontFamily: 'Rajdhani', letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '4px' }}>Player Profile</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '4px' }}>
+                                <p style={{ color: '#AAAAAA', fontSize: '0.8rem', fontFamily: 'Rajdhani', letterSpacing: '0.15em', textTransform: 'uppercase', margin: 0 }}>Player Profile</p>
+                                {isPremium && (
+                                    <span style={{
+                                        background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                                        color: '#0A0A0A', padding: '2px 10px',
+                                        fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.7rem',
+                                        letterSpacing: '0.15em', textTransform: 'uppercase',
+                                    }}>
+                                        PREMIUM
+                                    </span>
+                                )}
+                            </div>
                             <h1 style={{ fontSize: '2.2rem', marginBottom: '4px', fontStyle: 'italic' }}>
                                 WELCOME, <span style={{ color: '#FFD700' }}>{user?.first_name?.toUpperCase()}</span>
                             </h1>
@@ -278,6 +332,23 @@ const Dashboard = () => {
                                 <p style={{ color: '#AAAAAA', fontSize: '0.9rem', fontFamily: 'Rajdhani', marginBottom: '8px' }}>@{user.username}</p>
                             )}
                             <div style={{ width: '60px', height: '3px', background: '#FFD700', marginBottom: '16px' }} />
+
+                            {/* AI Usage indicator */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap', marginBottom: stats.length > 0 ? '16px' : '0' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <FiZap size={13} style={{ color: '#FFD700' }} />
+                                    <span style={{ color: '#AAAAAA', fontSize: '0.78rem', letterSpacing: '0.05em' }}>
+                                        AI Insights: <span style={{ color: aiUsage.count >= aiUsage.limit ? '#FF4444' : '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>
+                                            {aiUsage.count}/{aiUsage.limit}
+                                        </span> today
+                                    </span>
+                                </div>
+                                {!isPremium && (
+                                    <a href="/elite" style={{ color: '#FFD700', fontSize: '0.75rem', fontFamily: 'Rajdhani', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none', borderBottom: '1px solid rgba(255,215,0,0.3)' }}>
+                                        Upgrade for 20/day
+                                    </a>
+                                )}
+                            </div>
 
                             {stats.length > 0 && (
                                 <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
@@ -324,52 +395,29 @@ const Dashboard = () => {
                                     style={{
                                         background: 'transparent',
                                         border: `1px solid ${isSelected ? game.color : 'rgba(255,255,255,0.08)'}`,
-                                        padding: '0',
-                                        cursor: 'pointer',
-                                        textAlign: 'center',
+                                        padding: '0', cursor: 'pointer', textAlign: 'center',
                                         transition: 'all 0.2s',
                                         boxShadow: isSelected ? `0 0 20px ${game.glow}` : 'none',
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        height: '140px',
+                                        position: 'relative', overflow: 'hidden', height: '140px',
                                     }}
                                 >
-                                    {isSelected && (
-                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: game.color, zIndex: 2 }} />
-                                    )}
+                                    {isSelected && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '3px', background: game.color, zIndex: 2 }} />}
                                     <img
                                         src={game.image}
                                         alt={game.name}
                                         style={{
-                                            width: '100%',
-                                            height: '100%',
-                                            objectFit: 'cover',
-                                            display: 'block',
+                                            width: '100%', height: '100%', objectFit: 'cover', display: 'block',
                                             filter: isSelected ? 'brightness(0.7)' : 'brightness(0.4)',
                                             transition: 'filter 0.3s',
                                         }}
                                     />
                                     <div style={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'flex-end',
+                                        position: 'absolute', inset: 0,
+                                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end',
                                         padding: '12px',
-                                        background: isSelected
-                                            ? `linear-gradient(to top, ${game.color}88, transparent)`
-                                            : 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
+                                        background: isSelected ? `linear-gradient(to top, ${game.color}88, transparent)` : 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)',
                                     }}>
-                                        <p style={{
-                                            fontFamily: 'Rajdhani',
-                                            fontWeight: 700,
-                                            fontSize: '0.85rem',
-                                            letterSpacing: '0.1em',
-                                            textTransform: 'uppercase',
-                                            color: isSelected ? game.color : '#FFFFFF',
-                                            margin: 0,
-                                        }}>
+                                        <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: isSelected ? game.color : '#FFFFFF', margin: 0 }}>
                                             {game.name}
                                         </p>
                                     </div>
@@ -474,16 +522,8 @@ const Dashboard = () => {
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px', marginBottom: '20px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                                             {gameOption && (
-                                                <div style={{
-                                                    width: '56px', height: '56px', borderRadius: '8px',
-                                                    overflow: 'hidden', flexShrink: 0,
-                                                    border: `1px solid ${gc.border}`,
-                                                }}>
-                                                    <img
-                                                        src={gameOption.image}
-                                                        alt={pg.game.name}
-                                                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                                                    />
+                                                <div style={{ width: '56px', height: '56px', borderRadius: '8px', overflow: 'hidden', flexShrink: 0, border: `1px solid ${gc.border}` }}>
+                                                    <img src={gameOption.image} alt={pg.game.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                 </div>
                                             )}
                                             <div>
@@ -603,6 +643,10 @@ const Dashboard = () => {
                                                 <WinRateBar winRate={gameStats.win_rate} />
                                             </div>
 
+                                            {/* AI Limit banner */}
+                                            <AILimitBanner error={insightError[pg.id]} isPremium={isPremium} />
+
+                                            {/* AI Insight button */}
                                             <motion.button
                                                 whileHover={{ scale: 1.02, boxShadow: '0 4px 20px rgba(255,215,0,0.15)' }}
                                                 whileTap={{ scale: 0.98 }}

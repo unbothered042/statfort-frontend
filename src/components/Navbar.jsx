@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiLogOut, FiUser, FiAward, FiSettings, FiMenu, FiX } from 'react-icons/fi';
+import { FiLogOut, FiUser, FiAward, FiSettings, FiMenu, FiX, FiZap } from 'react-icons/fi';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
@@ -71,6 +71,19 @@ const Navbar = () => {
                                 <FiUser size={16} /> {user.first_name}
                             </Link>
 
+                            <Link to="/elite" style={{
+                                ...linkStyle,
+                                color: '#FFD700',
+                                border: '1px solid rgba(255,215,0,0.3)',
+                                padding: '5px 14px',
+                                fontSize: '0.85rem',
+                            }}
+                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,215,0,0.1)'; }}
+                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                            >
+                                <FiZap size={14} /> Elite
+                            </Link>
+
                             {user.is_superuser && (
                                 <Link to="/admin" style={linkStyle}
                                     onMouseEnter={e => e.currentTarget.style.color = '#FFD700'}
@@ -134,6 +147,9 @@ const Navbar = () => {
                         <>
                             <Link to="/dashboard" style={linkStyle} onClick={() => setMenuOpen(false)}>
                                 <FiUser size={16} /> {user.first_name}
+                            </Link>
+                            <Link to="/elite" style={{ ...linkStyle, color: '#FFD700' }} onClick={() => setMenuOpen(false)}>
+                                <FiZap size={16} /> Elite Tier
                             </Link>
                             {user.is_superuser && (
                                 <Link to="/admin" style={linkStyle} onClick={() => setMenuOpen(false)}>
