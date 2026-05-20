@@ -3,7 +3,6 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Landing from './pages/Landing';
 import Register from './pages/Register';
-import Verify from './pages/Verify';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -11,6 +10,9 @@ import Dashboard from './pages/Dashboard';
 import Leaderboard from './pages/Leaderboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Elite from './pages/Elite';
+import Community from './pages/Community';
+import CategoryPage from './pages/CategoryPage';
+import PostPage from './pages/PostPage';
 
 function App() {
     return (
@@ -19,7 +21,6 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Landing />} />
                     <Route path="/register" element={<Register />} />
-                    <Route path="/verify" element={<Verify />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
@@ -27,6 +28,9 @@ function App() {
                     <Route path="/leaderboard" element={<Leaderboard />} />
                     <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
                     <Route path="/elite" element={<ProtectedRoute><Elite /></ProtectedRoute>} />
+                    <Route path="/community" element={<Community />} />
+                    <Route path="/community/:categorySlug" element={<CategoryPage />} />
+                    <Route path="/community/post/:postId" element={<PostPage />} />
                 </Routes>
             </BrowserRouter>
         </AuthProvider>
