@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { FiLogOut, FiUser, FiAward, FiSettings, FiMenu, FiX, FiZap } from 'react-icons/fi';
+import { FiLogOut, FiUser, FiAward, FiSettings, FiMenu, FiX, FiZap, FiUsers } from 'react-icons/fi';
 
 const Navbar = () => {
     const { user, logout } = useAuth();
@@ -60,6 +60,13 @@ const Navbar = () => {
                         onMouseLeave={e => e.currentTarget.style.color = '#AAAAAA'}
                     >
                         <FiAward size={16} /> Leaderboard
+                    </Link>
+
+                    <Link to="/community" style={linkStyle}
+                        onMouseEnter={e => e.currentTarget.style.color = '#FFD700'}
+                        onMouseLeave={e => e.currentTarget.style.color = '#AAAAAA'}
+                    >
+                        <FiUsers size={16} /> Community
                     </Link>
 
                     {user ? (
@@ -141,6 +148,10 @@ const Navbar = () => {
                 }}>
                     <Link to="/leaderboard" style={linkStyle} onClick={() => setMenuOpen(false)}>
                         <FiAward size={16} /> Leaderboard
+                    </Link>
+
+                    <Link to="/community" style={linkStyle} onClick={() => setMenuOpen(false)}>
+                        <FiUsers size={16} /> Community
                     </Link>
 
                     {user ? (
