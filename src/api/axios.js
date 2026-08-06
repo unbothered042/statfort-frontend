@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const API = axios.create({
-    baseURL: 'https://web-production-191b6.up.railway.app/api',
-    
+    baseURL: 'https://statfort-backend.onrender.com/api',
 });
 
 API.interceptors.request.use((config) => {
