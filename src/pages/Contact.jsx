@@ -49,11 +49,11 @@ const Contact = () => {
     return (
         <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
             <Navbar />
-            <div style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 16px' }}>
+            <div className="contact-wrap" style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 16px' }}>
 
                 {/* Header */}
                 <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} style={{ marginBottom: '48px' }}>
-                    <h1 style={{ fontSize: '2.8rem', marginBottom: '8px', fontStyle: 'italic' }}>
+                    <h1 className="contact-h1" style={{ fontSize: '2.8rem', marginBottom: '8px', fontStyle: 'italic' }}>
                         SUPPORT & <span style={{ color: '#FFD700' }}>COMPLAINTS</span>
                     </h1>
                     <div style={{ width: '60px', height: '3px', background: '#FFD700', marginBottom: '12px' }} />
@@ -62,7 +62,7 @@ const Contact = () => {
                     </p>
                 </motion.div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '32px', alignItems: 'start' }}>
+                <div className="contact-grid">
 
                     {/* Left info panel */}
                     <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
@@ -139,7 +139,7 @@ const Contact = () => {
                                     SEND A <span style={{ color: '#FFD700' }}>MESSAGE</span>
                                 </h2>
                                 <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                                    <div className="contact-name-row">
                                         <div>
                                             <label className="sf-label">Your Name</label>
                                             <input className="sf-input" name="name" placeholder="John Doe" value={form.name} onChange={handleChange} required />
@@ -192,6 +192,46 @@ const Contact = () => {
                     </motion.div>
                 </div>
             </div>
+
+            <style>{`
+                .contact-grid {
+                    display: grid;
+                    grid-template-columns: 1fr 2fr;
+                    gap: 32px;
+                    align-items: start;
+                }
+                .contact-name-row {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 16px;
+                }
+
+                @media (max-width: 768px) {
+                    .contact-grid {
+                        grid-template-columns: 1fr;
+                        gap: 24px;
+                    }
+                    .contact-wrap {
+                        padding: 40px 16px !important;
+                    }
+                    .contact-h1 {
+                        font-size: 2.1rem !important;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .contact-name-row {
+                        grid-template-columns: 1fr;
+                        gap: 12px;
+                    }
+                    .contact-h1 {
+                        font-size: 1.7rem !important;
+                    }
+                    .contact-wrap {
+                        padding: 32px 12px !important;
+                    }
+                }
+            `}</style>
         </div>
     );
 };
