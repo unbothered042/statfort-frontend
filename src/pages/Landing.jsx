@@ -36,6 +36,14 @@ const GAME_CARDS = [
         glow: 'rgba(22, 163, 74, 0.15)',
         border: 'rgba(22, 163, 74, 0.4)',
     },
+    {
+        name: 'EFOOTBALL',
+        tag: 'AI Verification',
+        desc: 'Division 1 players only. Submit wins, draws and losses with AI screenshot verification.',
+        color: '#0EA5E9',
+        glow: 'rgba(14, 165, 233, 0.15)',
+        border: 'rgba(14, 165, 233, 0.4)',
+    },
 ];
 
 const FEATURES = [
@@ -124,7 +132,7 @@ const Landing = () => {
                         fontSize: '1.1rem', color: '#AAAAAA', lineHeight: 1.8,
                         maxWidth: '580px', margin: '0 auto 48px',
                     }}>
-                        Track your stats across Fortnite, Apex Legends and COD Mobile. Climb the Nigerian leaderboard. Get AI insights to dominate your competition.
+                        Track your stats across Fortnite, Apex Legends, COD Mobile and eFootball. Climb the Nigerian leaderboard. Get AI insights to dominate your competition.
                     </p>
 
                     <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -346,21 +354,36 @@ const Landing = () => {
 
             {/* FOOTER */}
             <footer style={{
-                background: '#080808',
-                borderTop: '1px solid rgba(255,215,0,0.1)',
-                padding: '40px 20px',
-                textAlign: 'center',
-            }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '16px' }}>
-                    <img src="/statfort-logo.png" alt="StatFort" style={{ height: '32px', width: '32px', objectFit: 'contain' }} />
-                    <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '1.4rem', fontWeight: 700, color: '#FFD700', letterSpacing: '0.1em' }}>
-                        STAT<span style={{ color: '#FFFFFF' }}>FORT</span>
-                    </span>
-                </div>
-                <p style={{ color: '#555555', fontSize: '0.85rem', fontFamily: 'Rajdhani, sans-serif', letterSpacing: '0.08em' }}>
-                    STATFORT &copy; {new Date().getFullYear()} — BUILT FOR NIGERIAN GAMERS
-                </p>
-            </footer>
+                    background: '#080808',
+                    borderTop: '1px solid rgba(255,215,0,0.1)',
+                    padding: '40px 20px',
+                    textAlign: 'center',
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '16px' }}>
+                        <img src="/statfort-logo.png" alt="StatFort" style={{ height: '32px', width: '32px', objectFit: 'contain' }} />
+                        <span style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '1.4rem', fontWeight: 700, color: '#FFD700', letterSpacing: '0.1em' }}>
+                            STAT<span style={{ color: '#FFFFFF' }}>FORT</span>
+                        </span>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                        {[
+                            { label: 'Leaderboard', path: '/leaderboard' },
+                            { label: 'Community', path: '/community' },
+                            { label: 'Elite Tier', path: '/elite' },
+                            { label: 'Contact & Support', path: '/contact' },
+                        ].map((link) => (
+                            <a key={link.label} href={link.path} style={{ color: '#555555', fontSize: '0.85rem', fontFamily: 'Rajdhani', letterSpacing: '0.05em', textDecoration: 'none', transition: 'color 0.2s' }}
+                            onMouseEnter={e => e.currentTarget.style.color = '#FFD700'}
+                            onMouseLeave={e => e.currentTarget.style.color = '#555555'}
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                    </div>
+                    <p style={{ color: '#333333', fontSize: '0.82rem', fontFamily: 'Rajdhani', letterSpacing: '0.05em' }}>
+                        STATFORT &copy; {new Date().getFullYear()} — BUILT FOR NIGERIAN GAMERS
+                    </p>
+                </footer>
         </div>
     );
 };

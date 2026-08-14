@@ -13,6 +13,8 @@ import Elite from './pages/Elite';
 import Community from './pages/Community';
 import CategoryPage from './pages/CategoryPage';
 import PostPage from './pages/PostPage';
+import Contact from './pages/Contact';
+import HelpButton from './components/HelpButton';
 
 function App() {
     return (
@@ -31,7 +33,9 @@ function App() {
                     <Route path="/community" element={<Community />} />
                     <Route path="/community/:categorySlug" element={<CategoryPage />} />
                     <Route path="/community/post/:postId" element={<PostPage />} />
+                    <Route path="/contact" element={<Contact />} />
                 </Routes>
+                <HelpButton />
             </BrowserRouter>
         </AuthProvider>
     );

@@ -29,7 +29,10 @@ const Leaderboard = () => {
         { slug: 'fortnite', name: 'Fortnite' },
         { slug: 'apex-legends', name: 'Apex Legends' },
         { slug: 'cod-mobile', name: 'COD Mobile' },
+        { slug: 'efootball', name: 'eFootball' },
     ];
+
+    const isEfootball = activeGame === 'efootball';
 
     return (
         <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
@@ -127,25 +130,51 @@ const Leaderboard = () => {
                                     </div>
                                 </div>
 
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.kd_ratio}</p>
-                                    <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>K/D</p>
-                                </div>
+                                {isEfootball ? (
+                                    <>
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.wins}</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Wins</p>
+                                        </div>
 
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.wins}</p>
-                                    <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Wins</p>
-                                </div>
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.draws}</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Draws</p>
+                                        </div>
 
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.kills}</p>
-                                    <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kills</p>
-                                </div>
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.win_rate}%</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Win Rate</p>
+                                        </div>
 
-                                <div style={{ textAlign: 'center' }}>
-                                    <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.score?.toLocaleString()}</p>
-                                    <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Score</p>
-                                </div>
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.score?.toLocaleString()}</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Score</p>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.kd_ratio}</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>K/D</p>
+                                        </div>
+
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.wins}</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Wins</p>
+                                        </div>
+
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.kills}</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Kills</p>
+                                        </div>
+
+                                        <div style={{ textAlign: 'center' }}>
+                                            <p style={{ color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '1.1rem', margin: 0 }}>{player.score?.toLocaleString()}</p>
+                                            <p style={{ fontSize: '0.72rem', color: '#555555', margin: 0, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Score</p>
+                                        </div>
+                                    </>
+                                )}
                             </motion.div>
                         ))}
                     </div>

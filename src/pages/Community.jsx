@@ -10,6 +10,7 @@ const GAME_COLORS = {
     'fortnite': '#7C3AED',
     'apex-legends': '#DC2626',
     'cod-mobile': '#16A34A',
+    'efootball': '#0EA5E9',
 };
 
 const Community = () => {

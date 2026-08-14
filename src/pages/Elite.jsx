@@ -4,13 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
-import { FiZap, FiLock, FiTrendingUp, FiTarget, FiShield, FiAward, FiBarChart2 } from 'react-icons/fi';
+import { FiZap, FiLock, FiTrendingUp, FiTarget, FiShield, FiAward, FiBarChart2, FiUsers } from 'react-icons/fi';
 
 const ELITE_FEATURES = [
     { icon: <FiBarChart2 size={20} />, title: 'Performance Volatility', desc: 'Discover if you are a streaky player or a consistent anchor across all your matches.' },
     { icon: <FiTarget size={20} />, title: 'Skill Gap Analysis', desc: 'See exactly how you rank against Nigerian top players and what to fix first.' },
-    { icon: <FiShield size={20} />, title: 'Clutch Factor', desc: 'Your success rate in high-pressure final circles and 1v1 situations.' },
-    { icon: <FiZap size={20} />, title: 'Loadout Efficiency', desc: 'Which playstyle and weapon type is yielding your highest win percentages.' },
+    { icon: <FiShield size={20} />, title: 'Clutch Factor / Squad Synergy', desc: 'Your success rate under pressure — or, for eFootball, whether your pack players are paired correctly.' },
+    { icon: <FiZap size={20} />, title: 'Loadout / Tactical Efficiency', desc: 'Which playstyle, weapon type, or squad shape is yielding your highest win percentages.' },
     { icon: <FiTrendingUp size={20} />, title: 'AI Growth Projection', desc: 'Where your rank will be in 30 days if you maintain your current improvement rate.' },
 ];
 
@@ -60,6 +60,24 @@ const EliteCard = ({ data, icon, color }) => (
         <p style={{ color: '#AAAAAA', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>{data.analysis}</p>
     </motion.div>
 );
+
+// Default (FPS-style games): performance_volatility, skill_gap, clutch_factor, weapon_efficiency, growth_projection
+const DEFAULT_CARD_KEYS = [
+    { key: 'performance_volatility', color: '#FFD700', icon: <FiBarChart2 size={20} /> },
+    { key: 'skill_gap', color: '#7C3AED', icon: <FiTarget size={20} /> },
+    { key: 'clutch_factor', color: '#DC2626', icon: <FiShield size={20} /> },
+    { key: 'weapon_efficiency', color: '#16A34A', icon: <FiZap size={20} /> },
+    { key: 'growth_projection', color: '#EA580C', icon: <FiTrendingUp size={20} /> },
+];
+
+// eFootball: performance_volatility, skill_gap, squad_synergy, tactical_efficiency, growth_projection
+const EFOOTBALL_CARD_KEYS = [
+    { key: 'performance_volatility', color: '#FFD700', icon: <FiBarChart2 size={20} /> },
+    { key: 'skill_gap', color: '#7C3AED', icon: <FiTarget size={20} /> },
+    { key: 'squad_synergy', color: '#0EA5E9', icon: <FiUsers size={20} /> },
+    { key: 'tactical_efficiency', color: '#16A34A', icon: <FiZap size={20} /> },
+    { key: 'growth_projection', color: '#EA580C', icon: <FiTrendingUp size={20} /> },
+];
 
 const Elite = () => {
     const { user, login } = useAuth();
@@ -148,6 +166,8 @@ const Elite = () => {
         } catch (err) {
             if (err.response?.data?.requires_premium) {
                 setError('premium_required');
+            } else if (err.response?.data?.requires_squad_setup) {
+                setError('squad_required');
             } else {
                 setError(err.response?.data?.error || 'Failed to generate. Make sure you have approved stats first.');
             }
@@ -159,8 +179,9 @@ const Elite = () => {
     const getStatsForGame = (playerGameId) => stats.find(s => s.player_game.id === playerGameId);
     const isPremium = user?.is_premium;
 
-    const CARD_COLORS = ['#FFD700', '#7C3AED', '#DC2626', '#16A34A', '#EA580C'];
-    const CARD_ICONS = [<FiBarChart2 size={20} />, <FiTarget size={20} />, <FiShield size={20} />, <FiZap size={20} />, <FiTrendingUp size={20} />];
+    const selectedGame = myGames.find(pg => pg.id === selectedGameId);
+    const isEfootballSelected = selectedGame?.game?.slug === 'efootball';
+    const CARD_KEYS = isEfootballSelected ? EFOOTBALL_CARD_KEYS : DEFAULT_CARD_KEYS;
 
     if (verifying) return (
         <div style={{ background: '#0A0A0A', minHeight: '100vh' }}>
@@ -234,7 +255,7 @@ const Elite = () => {
                             Get full access to all 5 Elite Tier analyses, AI Growth Projection and advanced performance tracking for just
                         </p>
                         <div style={{ marginBottom: '24px' }}>
-                            <span style={{ fontFamily: 'Rajdhani', fontSize: '3rem', fontWeight: 700, color: '#FFD700', fontStyle: 'italic' }}>₦1,500</span>
+                            <span style={{ fontFamily: 'Rajdhani', fontSize: '3rem', fontWeight: 700, color: '#FFD700', fontStyle: 'italic' }}>₦1,000</span>
                             <span style={{ color: '#AAAAAA', fontSize: '1rem' }}>/month</span>
                         </div>
 
@@ -263,7 +284,7 @@ const Elite = () => {
                                 cursor: 'pointer', boxShadow: '0 8px 32px rgba(255,215,0,0.3)',
                             }}
                         >
-                            {paymentLoading ? 'Redirecting to Paystack...' : 'Subscribe Now - ₦1,500/month'}
+                            {paymentLoading ? 'Redirecting to Paystack...' : 'Subscribe Now - ₦1,000/month'}
                         </motion.button>
 
                         <p style={{ color: '#555555', fontSize: '0.8rem', marginTop: '16px' }}>
@@ -336,7 +357,22 @@ const Elite = () => {
                             {loading ? 'Generating Elite Analysis...' : 'Generate Elite Tier Analysis'}
                         </motion.button>
 
-                        {error && error !== 'premium_required' && (
+                        {error === 'squad_required' && (
+                            <div style={{
+                                display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px',
+                                background: 'rgba(14,165,233,0.06)', border: '1px solid rgba(14,165,233,0.3)',
+                                borderLeft: '3px solid #0EA5E9', padding: '14px 16px', marginBottom: '24px',
+                            }}>
+                                <p style={{ color: '#AAAAAA', fontSize: '0.88rem', margin: 0 }}>
+                                    Set up your squad (GK, CB, CB, CDM, LW, RW, ST) in the Dashboard first — this powers your Squad Synergy analysis.
+                                </p>
+                                <Link to="/dashboard">
+                                    <button className="btn-gold" style={{ padding: '8px 20px', fontSize: '0.82rem', whiteSpace: 'nowrap' }}>Go to Dashboard</button>
+                                </Link>
+                            </div>
+                        )}
+
+                        {error && error !== 'premium_required' && error !== 'squad_required' && (
                             <p className="error-msg" style={{ marginBottom: '24px' }}>{error}</p>
                         )}
 
@@ -359,13 +395,7 @@ const Elite = () => {
                                         </p>
                                     </div>
 
-                                    {[
-                                        { key: 'performance_volatility', color: CARD_COLORS[0], icon: CARD_ICONS[0] },
-                                        { key: 'skill_gap', color: CARD_COLORS[1], icon: CARD_ICONS[1] },
-                                        { key: 'clutch_factor', color: CARD_COLORS[2], icon: CARD_ICONS[2] },
-                                        { key: 'weapon_efficiency', color: CARD_COLORS[3], icon: CARD_ICONS[3] },
-                                        { key: 'growth_projection', color: CARD_COLORS[4], icon: CARD_ICONS[4] },
-                                    ].map(({ key, color, icon }, i) => (
+                                    {CARD_KEYS.map(({ key, color, icon }, i) => (
                                         eliteData[key] && (
                                             <motion.div
                                                 key={key}

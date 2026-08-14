@@ -257,28 +257,42 @@ const AdminDashboard = () => {
                             <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                                 <thead>
                                     <tr style={{ borderBottom: '1px solid rgba(255,215,0,0.2)' }}>
-                                        {['Player', 'Game', 'Kills', 'Deaths', 'Wins', 'K/D', 'Status'].map(h => (
+                                        {['Player', 'Game', 'Kills/Wins', 'Deaths/Draws', 'Wins/Rate', 'K/D or Score', 'Status'].map(h => (
                                             <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontFamily: 'Rajdhani', fontSize: '0.85rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: '#AAAAAA' }}>{h}</th>
                                         ))}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {stats.map((s) => (
-                                        <tr key={s.id} style={{ borderBottom: '1px solid rgba(255,215,0,0.05)', transition: 'background 0.2s' }}
-                                            onMouseEnter={e => e.currentTarget.style.background = '#111111'}
-                                            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                                        >
-                                            <td style={{ padding: '14px 16px', fontFamily: 'Rajdhani', fontWeight: 600, color: '#FFFFFF' }}>{s.player_game?.gaming_id}</td>
-                                            <td style={{ padding: '14px 16px', color: '#AAAAAA' }}>{s.player_game?.game?.name}</td>
-                                            <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.kills}</td>
-                                            <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.deaths}</td>
-                                            <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.wins}</td>
-                                            <td style={{ padding: '14px 16px', color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>{s.kd_ratio}</td>
-                                            <td style={{ padding: '14px 16px' }}>
-                                                <span className={s.status === 'approved' ? 'badge-approved' : 'badge-pending'}>{s.status}</span>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {stats.map((s) => {
+                                        const isEfootball = s.player_game?.game?.slug === 'efootball';
+                                        return (
+                                            <tr key={s.id} style={{ borderBottom: '1px solid rgba(255,215,0,0.05)', transition: 'background 0.2s' }}
+                                                onMouseEnter={e => e.currentTarget.style.background = '#111111'}
+                                                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                                            >
+                                                <td style={{ padding: '14px 16px', fontFamily: 'Rajdhani', fontWeight: 600, color: '#FFFFFF' }}>{s.player_game?.gaming_id}</td>
+                                                <td style={{ padding: '14px 16px', color: '#AAAAAA' }}>{s.player_game?.game?.name}</td>
+                                                {isEfootball ? (
+                                                    <>
+                                                        <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.wins}</td>
+                                                        <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.draws}</td>
+                                                        <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.win_rate}%</td>
+                                                        <td style={{ padding: '14px 16px', color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>{s.score}</td>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.kills}</td>
+                                                        <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.deaths}</td>
+                                                        <td style={{ padding: '14px 16px', color: '#FFFFFF' }}>{s.wins}</td>
+                                                        <td style={{ padding: '14px 16px', color: '#FFD700', fontFamily: 'Rajdhani', fontWeight: 700 }}>{s.kd_ratio}</td>
+                                                    </>
+                                                )}
+                                                <td style={{ padding: '14px 16px' }}>
+                                                    <span className={s.status === 'approved' ? 'badge-approved' : 'badge-pending'}>{s.status}</span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                             {stats.length === 0 && <p style={{ color: '#AAAAAA', textAlign: 'center', padding: '40px' }}>No stats found.</p>}

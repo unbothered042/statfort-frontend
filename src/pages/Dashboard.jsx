@@ -3,19 +3,50 @@ import { motion, AnimatePresence } from 'framer-motion';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../context/AuthContext';
-import { FiRefreshCw, FiZap, FiTrash2, FiInfo, FiUpload, FiTarget, FiAward, FiLock } from 'react-icons/fi';
+import { FiRefreshCw, FiZap, FiTrash2, FiInfo, FiUpload, FiTarget, FiAward, FiLock, FiUsers } from 'react-icons/fi';
 
 const GAME_OPTIONS = [
     { name: 'Fortnite', slug: 'fortnite', color: '#7C3AED', glow: 'rgba(124,58,237,0.3)', border: 'rgba(124,58,237,0.5)', image: '/fortnite.jpg' },
     { name: 'Apex Legends', slug: 'apex-legends', color: '#DC2626', glow: 'rgba(220,38,38,0.3)', border: 'rgba(220,38,38,0.5)', image: '/apex.jpg' },
     { name: 'COD Mobile', slug: 'cod-mobile', color: '#16A34A', glow: 'rgba(22,163,74,0.3)', border: 'rgba(22,163,74,0.5)', image: '/cod.jpg' },
+    { name: 'eFootball', slug: 'efootball', color: '#0EA5E9', glow: 'rgba(14,165,233,0.3)', border: 'rgba(14,165,233,0.5)', image: '/efootball.jpg' },
 ];
 
 const GAME_COLORS = {
     'fortnite': { color: '#7C3AED', glow: 'rgba(124,58,237,0.15)', border: 'rgba(124,58,237,0.4)' },
     'apex-legends': { color: '#DC2626', glow: 'rgba(220,38,38,0.15)', border: 'rgba(220,38,38,0.4)' },
     'cod-mobile': { color: '#16A34A', glow: 'rgba(22,163,74,0.15)', border: 'rgba(22,163,74,0.4)' },
+    'efootball': { color: '#0EA5E9', glow: 'rgba(14,165,233,0.15)', border: 'rgba(14,165,233,0.4)' },
 };
+
+// Must match backend PLAYER_TYPE_CHOICES in stats/models.py
+const PLAYER_TYPE_OPTIONS = [
+    { value: 'destroyer', label: 'Destroyer' },
+    { value: 'anchor_man', label: 'Anchor Man' },
+    { value: 'extra_frame', label: 'Extra Frame' },
+    { value: 'catalyst', label: 'Catalyst' },
+    { value: 'long_ball_expert', label: 'Long Ball Expert' },
+    { value: 'aerial_threat', label: 'Aerial Threat' },
+    { value: 'box_to_box', label: 'Box-to-Box' },
+    { value: 'deep_lying_playmaker', label: 'Deep-Lying Playmaker' },
+    { value: 'the_incisive_run', label: 'The Incisive Run' },
+    { value: 'prolific_winger', label: 'Prolific Winger' },
+    { value: 'cross_specialist', label: 'Cross Specialist' },
+    { value: 'speedster', label: 'Speedster' },
+    { value: 'goal_poacher', label: 'Goal Poacher' },
+    { value: 'target_man', label: 'Target Man' },
+    { value: 'dummy_runner', label: 'Dummy Runner' },
+];
+
+const SQUAD_SLOTS = [
+    { field: 'gk_type', label: 'GK' },
+    { field: 'cb1_type', label: 'CB' },
+    { field: 'cb2_type', label: 'CB' },
+    { field: 'cdm_type', label: 'CDM' },
+    { field: 'lw_type', label: 'LW' },
+    { field: 'rw_type', label: 'RW' },
+    { field: 'st_type', label: 'ST' },
+];
 
 const KDBar = ({ kd, maxKd = 5 }) => {
     const pct = Math.min((kd / maxKd) * 100, 100);
@@ -58,18 +89,18 @@ const WinRateBar = ({ winRate }) => {
     );
 };
 
-const ScannerUpload = ({ onFile, fileName }) => {
+const ScannerUpload = ({ onFile, fileName, accentColor = '#16A34A' }) => {
     const [scanning, setScanning] = useState(false);
     return (
         <div style={{ position: 'relative', overflow: 'hidden' }}>
             <div
                 style={{
-                    border: '2px dashed rgba(22,163,74,0.4)', padding: '32px 20px',
+                    border: `2px dashed ${accentColor}66`, padding: '32px 20px',
                     textAlign: 'center', cursor: 'pointer', position: 'relative',
-                    background: 'rgba(22,163,74,0.03)', transition: 'all 0.3s',
+                    background: `${accentColor}08`, transition: 'all 0.3s',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(22,163,74,0.8)'; setScanning(true); }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(22,163,74,0.4)'; setScanning(false); }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = `${accentColor}CC`; setScanning(true); }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = `${accentColor}66`; setScanning(false); }}
             >
                 {scanning && (
                     <motion.div
@@ -78,18 +109,18 @@ const ScannerUpload = ({ onFile, fileName }) => {
                         transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
                         style={{
                             position: 'absolute', left: 0, right: 0, height: '2px',
-                            background: 'linear-gradient(90deg, transparent, #16A34A, transparent)',
-                            boxShadow: '0 0 8px rgba(22,163,74,0.8)', pointerEvents: 'none',
+                            background: `linear-gradient(90deg, transparent, ${accentColor}, transparent)`,
+                            boxShadow: `0 0 8px ${accentColor}CC`, pointerEvents: 'none',
                         }}
                     />
                 )}
-                <FiUpload size={28} style={{ color: '#16A34A', marginBottom: '10px' }} />
+                <FiUpload size={28} style={{ color: accentColor, marginBottom: '10px' }} />
                 <p style={{ color: '#AAAAAA', fontSize: '0.88rem', marginBottom: '4px', fontFamily: 'Rajdhani', fontWeight: 600, letterSpacing: '0.05em' }}>
                     DROP SCREENSHOT OR CLICK TO SCAN
                 </p>
                 <p style={{ color: '#555555', fontSize: '0.78rem', margin: 0 }}>AI verification will analyze your stats automatically</p>
                 <input type="file" accept="image/*" required onChange={(e) => onFile(e.target.files[0])} style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }} />
-                {fileName && <p style={{ color: '#16A34A', fontSize: '0.85rem', marginTop: '8px', fontFamily: 'Rajdhani', fontWeight: 700, marginBottom: 0 }}>{fileName}</p>}
+                {fileName && <p style={{ color: accentColor, fontSize: '0.85rem', marginTop: '8px', fontFamily: 'Rajdhani', fontWeight: 700, marginBottom: 0 }}>{fileName}</p>}
             </div>
         </div>
     );
@@ -145,7 +176,18 @@ const Dashboard = () => {
     const [codLoading, setCodLoading] = useState({});
     const [codError, setCodError] = useState({});
     const [codSuccess, setCodSuccess] = useState({});
+    const [efForm, setEfForm] = useState({});
+    const [efLoading, setEfLoading] = useState({});
+    const [efError, setEfError] = useState({});
+    const [efSuccess, setEfSuccess] = useState({});
     const [platform, setPlatform] = useState({});
+
+    // Squad Setup (eFootball Elite pairing analysis)
+    const [squads, setSquads] = useState({});
+    const [squadForm, setSquadForm] = useState({});
+    const [squadLoading, setSquadLoading] = useState({});
+    const [squadError, setSquadError] = useState({});
+    const [squadSuccess, setSquadSuccess] = useState({});
 
     useEffect(() => { loadAll(); }, []);
 
@@ -160,6 +202,25 @@ const Dashboard = () => {
             setGames(gamesRes.data);
             setMyGames(myGamesRes.data);
             setStats(statsRes.data);
+
+            // Load any existing squad setups for eFootball games
+            const efGames = myGamesRes.data.filter(pg => pg.game.slug === 'efootball');
+            if (efGames.length > 0) {
+                const squadResults = await Promise.allSettled(
+                    efGames.map(pg => API.get(`/stats/efootball/squad/?player_game_id=${pg.id}`))
+                );
+                const squadMap = {};
+                const formMap = {};
+                efGames.forEach((pg, i) => {
+                    const result = squadResults[i];
+                    if (result.status === 'fulfilled') {
+                        squadMap[pg.id] = result.value.data;
+                        formMap[pg.id] = result.value.data;
+                    }
+                });
+                setSquads(squadMap);
+                setSquadForm(prev => ({ ...formMap, ...prev }));
+            }
         } catch (err) {
             console.error(err);
         } finally {
@@ -252,6 +313,59 @@ const Dashboard = () => {
 
     const updateCodForm = (playerGameId, field, value) => {
         setCodForm({ ...codForm, [playerGameId]: { ...(codForm[playerGameId] || {}), [field]: value } });
+    };
+
+    const handleEfSubmit = async (e, playerGameId) => {
+        e.preventDefault();
+        setEfLoading({ ...efLoading, [playerGameId]: true });
+        setEfError({ ...efError, [playerGameId]: '' });
+        setEfSuccess({ ...efSuccess, [playerGameId]: '' });
+        try {
+            const form = efForm[playerGameId] || {};
+            const formData = new FormData();
+            formData.append('player_game_id', playerGameId);
+            formData.append('wins', form.wins || 0);
+            formData.append('draws', form.draws || 0);
+            formData.append('losses', form.losses || 0);
+            formData.append('screenshot', form.screenshot);
+            await API.post('/stats/efootball/submit/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+            setEfSuccess({ ...efSuccess, [playerGameId]: 'Stats verified and approved by AI.' });
+            loadAll();
+        } catch (err) {
+            setEfError({ ...efError, [playerGameId]: err.response?.data?.error || 'Submission failed.' });
+        } finally { setEfLoading({ ...efLoading, [playerGameId]: false }); }
+    };
+
+    const updateEfForm = (playerGameId, field, value) => {
+        setEfForm({ ...efForm, [playerGameId]: { ...(efForm[playerGameId] || {}), [field]: value } });
+    };
+
+    const updateSquadForm = (playerGameId, field, value) => {
+        setSquadForm({ ...squadForm, [playerGameId]: { ...(squadForm[playerGameId] || {}), [field]: value } });
+    };
+
+    const handleSquadSubmit = async (e, playerGameId) => {
+        e.preventDefault();
+        const form = squadForm[playerGameId] || {};
+        const missing = SQUAD_SLOTS.some(({ field }) => !form[field]);
+        if (missing) {
+            setSquadError({ ...squadError, [playerGameId]: 'Select a player type for all 7 positions.' });
+            return;
+        }
+        setSquadLoading({ ...squadLoading, [playerGameId]: true });
+        setSquadError({ ...squadError, [playerGameId]: '' });
+        setSquadSuccess({ ...squadSuccess, [playerGameId]: '' });
+        try {
+            const payload = { player_game_id: playerGameId };
+            SQUAD_SLOTS.forEach(({ field }) => { payload[field] = form[field]; });
+            const res = await API.post('/stats/efootball/squad/', payload);
+            setSquads({ ...squads, [playerGameId]: res.data });
+            setSquadSuccess({ ...squadSuccess, [playerGameId]: 'Squad saved. Ready for Squad Synergy analysis in Elite Tier.' });
+        } catch (err) {
+            setSquadError({ ...squadError, [playerGameId]: err.response?.data?.error || 'Failed to save squad.' });
+        } finally {
+            setSquadLoading({ ...squadLoading, [playerGameId]: false });
+        }
     };
 
     const getStatsForGame = (playerGameId) => stats.find(s => s.player_game.id === playerGameId);
@@ -500,6 +614,7 @@ const Dashboard = () => {
                         {myGames.map((pg, index) => {
                             const gameStats = getStatsForGame(pg.id);
                             const isApiGame = pg.game.slug === 'fortnite' || pg.game.slug === 'apex-legends';
+                            const isEfootball = pg.game.slug === 'efootball';
                             const gc = GAME_COLORS[pg.game.slug] || { color: '#FFD700', glow: 'rgba(255,215,0,0.15)', border: 'rgba(255,215,0,0.3)' };
                             const gameOption = GAME_OPTIONS.find(g => g.slug === pg.game.slug);
 
@@ -589,6 +704,63 @@ const Dashboard = () => {
                                         </div>
                                     </div>
 
+                                    {/* eFootball Squad Setup (drives Elite Squad Synergy analysis) */}
+                                    {isEfootball && (
+                                        <div style={{
+                                            background: 'rgba(14,165,233,0.05)', border: '1px solid rgba(14,165,233,0.25)',
+                                            padding: '20px', marginBottom: '20px',
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                                <FiUsers size={15} style={{ color: '#0EA5E9' }} />
+                                                <p style={{ color: '#0EA5E9', fontFamily: 'Rajdhani', fontWeight: 700, fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase', margin: 0 }}>
+                                                    Elite Squad Setup
+                                                </p>
+                                            </div>
+                                            <p style={{ color: '#AAAAAA', fontSize: '0.82rem', marginBottom: '16px', lineHeight: 1.6 }}>
+                                                Set the pack player type for each key position. This powers your Squad Synergy pairing analysis in Elite Tier.
+                                            </p>
+                                            <form onSubmit={(e) => handleSquadSubmit(e, pg.id)} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '10px' }}>
+                                                    {SQUAD_SLOTS.map(({ field, label }, i) => (
+                                                        <div key={`${field}-${i}`}>
+                                                            <label className="sf-label">{label}</label>
+                                                            <select
+                                                                className="sf-select"
+                                                                value={(squadForm[pg.id] || {})[field] || ''}
+                                                                onChange={(e) => updateSquadForm(pg.id, field, e.target.value)}
+                                                                required
+                                                                style={{ borderColor: 'rgba(14,165,233,0.3)', width: '100%' }}
+                                                            >
+                                                                <option value="" disabled>Select type</option>
+                                                                {PLAYER_TYPE_OPTIONS.map(opt => (
+                                                                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                                                ))}
+                                                            </select>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {squadError[pg.id] && <p className="error-msg">{squadError[pg.id]}</p>}
+                                                {squadSuccess[pg.id] && <p className="success-msg">{squadSuccess[pg.id]}</p>}
+
+                                                <motion.button
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    type="submit"
+                                                    disabled={squadLoading[pg.id]}
+                                                    style={{
+                                                        background: 'transparent', border: '1px solid rgba(14,165,233,0.4)', color: '#0EA5E9',
+                                                        padding: '10px 24px', fontFamily: 'Rajdhani', fontWeight: 700,
+                                                        fontSize: '0.85rem', letterSpacing: '0.08em', textTransform: 'uppercase',
+                                                        cursor: 'pointer', width: 'fit-content',
+                                                    }}
+                                                >
+                                                    {squadLoading[pg.id] ? 'Saving...' : squads[pg.id] ? 'Update Squad' : 'Save Squad'}
+                                                </motion.button>
+                                            </form>
+                                        </div>
+                                    )}
+
                                     {/* Public stats notice */}
                                     {isApiGame && (
                                         <div style={{
@@ -619,12 +791,17 @@ const Dashboard = () => {
                                     {gameStats ? (
                                         <>
                                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(80px, 1fr))', gap: '10px', marginBottom: '20px' }}>
-                                                {[
+                                                {(isEfootball ? [
+                                                    { label: 'Wins', value: gameStats.wins },
+                                                    { label: 'Draws', value: gameStats.draws },
+                                                    { label: 'Losses', value: gameStats.matches_played - gameStats.wins - gameStats.draws },
+                                                    { label: 'Matches', value: gameStats.matches_played },
+                                                ] : [
                                                     { label: 'Kills', value: gameStats.kills },
                                                     { label: 'Deaths', value: gameStats.deaths },
                                                     { label: 'Wins', value: gameStats.wins },
                                                     { label: 'Matches', value: gameStats.matches_played },
-                                                ].map((stat) => (
+                                                ]).map((stat) => (
                                                     <motion.div
                                                         key={stat.label}
                                                         initial={{ scale: 0.8, opacity: 0 }}
@@ -639,7 +816,7 @@ const Dashboard = () => {
                                             </div>
 
                                             <div style={{ marginBottom: '20px' }}>
-                                                <KDBar kd={gameStats.kd_ratio} />
+                                                {!isEfootball && <KDBar kd={gameStats.kd_ratio} />}
                                                 <WinRateBar winRate={gameStats.win_rate} />
                                             </div>
 
@@ -704,6 +881,7 @@ const Dashboard = () => {
                                                         <ScannerUpload
                                                             onFile={(file) => updateCodForm(pg.id, 'screenshot', file)}
                                                             fileName={codForm[pg.id]?.screenshot?.name}
+                                                            accentColor="#16A34A"
                                                         />
 
                                                         {codError[pg.id] && <p className="error-msg">{codError[pg.id]}</p>}
@@ -725,6 +903,56 @@ const Dashboard = () => {
                                                         >
                                                             <FiUpload size={14} />
                                                             {codLoading[pg.id] ? 'AI Verifying...' : 'Submit for AI Verification'}
+                                                        </motion.button>
+                                                    </form>
+                                                </motion.div>
+                                            )}
+                                            {isEfootball && (
+                                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                                    <p style={{ color: '#AAAAAA', fontSize: '0.88rem', marginBottom: '20px' }}>
+                                                        Submit your eFootball Division 1 match record below. Our AI will verify your stats automatically through your screenshot.
+                                                    </p>
+                                                    <form onSubmit={(e) => handleEfSubmit(e, pg.id)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                                                            {['wins', 'draws', 'losses'].map((field) => (
+                                                                <div key={field}>
+                                                                    <label className="sf-label">{field}</label>
+                                                                    <input
+                                                                        className="sf-input"
+                                                                        type="number" min="0" placeholder="0"
+                                                                        onChange={(e) => updateEfForm(pg.id, field, e.target.value)}
+                                                                        required
+                                                                        style={{ borderColor: 'rgba(14,165,233,0.3)' }}
+                                                                    />
+                                                                </div>
+                                                            ))}
+                                                        </div>
+
+                                                        <ScannerUpload
+                                                            onFile={(file) => updateEfForm(pg.id, 'screenshot', file)}
+                                                            fileName={efForm[pg.id]?.screenshot?.name}
+                                                            accentColor="#0EA5E9"
+                                                        />
+
+                                                        {efError[pg.id] && <p className="error-msg">{efError[pg.id]}</p>}
+                                                        {efSuccess[pg.id] && <p className="success-msg">{efSuccess[pg.id]}</p>}
+
+                                                        <motion.button
+                                                            whileHover={{ scale: 1.02 }}
+                                                            whileTap={{ scale: 0.98 }}
+                                                            type="submit"
+                                                            disabled={efLoading[pg.id]}
+                                                            style={{
+                                                                background: '#0EA5E9', color: '#FFFFFF', border: 'none',
+                                                                padding: '12px 32px', fontFamily: 'Rajdhani', fontWeight: 700,
+                                                                fontSize: '0.95rem', letterSpacing: '0.1em', textTransform: 'uppercase',
+                                                                cursor: 'pointer', display: 'flex', alignItems: 'center',
+                                                                justifyContent: 'center', gap: '8px', width: '100%',
+                                                                boxShadow: '0 4px 20px rgba(14,165,233,0.3)',
+                                                            }}
+                                                        >
+                                                            <FiUpload size={14} />
+                                                            {efLoading[pg.id] ? 'AI Verifying...' : 'Submit for AI Verification'}
                                                         </motion.button>
                                                     </form>
                                                 </motion.div>
