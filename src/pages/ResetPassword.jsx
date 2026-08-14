@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 const ResetPassword = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [form, setForm] = useState({ email: location.state?.email || '', new_password: '' });
+    const [form, setForm] = useState({ email: location.state?.email || '', code: '', new_password: '' });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -35,13 +35,26 @@ const ResetPassword = () => {
                     <div style={{ marginBottom: '32px' }}>
                         <h1 style={{ fontSize: '2.5rem', marginBottom: '8px' }}>RESET <span style={{ color: '#FFD700' }}>PASSWORD</span></h1>
                         <div className="gold-line" />
-                        <p className="text-dim mt-2">Enter your new password</p>
+                        <p className="text-dim mt-2">Enter the code sent to your email and choose a new password</p>
                     </div>
                     <div className="sf-card">
                         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                             <div>
                                 <label className="sf-label">Email</label>
                                 <input className="sf-input" name="email" type="email" placeholder="john@example.com" value={form.email} onChange={handleChange} required />
+                            </div>
+                            <div>
+                                <label className="sf-label">Reset Code</label>
+                                <input
+                                    className="sf-input"
+                                    name="code"
+                                    placeholder="Enter 6-digit code"
+                                    value={form.code}
+                                    onChange={handleChange}
+                                    maxLength={6}
+                                    required
+                                    style={{ fontSize: '1.3rem', letterSpacing: '0.25em', textAlign: 'center' }}
+                                />
                             </div>
                             <div>
                                 <label className="sf-label">New Password</label>
