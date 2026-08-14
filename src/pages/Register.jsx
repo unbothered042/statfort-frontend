@@ -30,7 +30,7 @@ const Register = () => {
         setError('');
         try {
             await API.post('/users/register/', form);
-            navigate('/verify', { state: { email: form.email } });
+            navigate('/login');
         } catch (err) {
             const errors = err.response?.data;
             if (errors && typeof errors === 'object') {
