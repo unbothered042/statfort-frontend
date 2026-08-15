@@ -189,6 +189,10 @@ const Dashboard = () => {
     const [squadError, setSquadError] = useState({});
     const [squadSuccess, setSquadSuccess] = useState({});
 
+    // eFootball screenshot upload limit (3/day)
+    const [efUploadStatus, setEfUploadStatus] = useState({});
+
+
     useEffect(() => { loadAll(); }, []);
 
     const loadAll = async () => {
@@ -220,6 +224,14 @@ const Dashboard = () => {
                 });
                 setSquads(squadMap);
                 setSquadForm(prev => ({ ...formMap, ...prev }));
+
+                // Upload status is per-user (not per-game), fetch once
+                try {
+                    const statusRes = await API.get('/stats/efootball/upload-status/');
+                    const statusMap = {};
+                    efGames.forEach(pg => { statusMap[pg.id] = statusRes.data; });
+                    setEfUploadStatus(statusMap);
+                } catch (err) { console.error(err); }
             }
         } catch (err) {
             console.error(err);
@@ -328,11 +340,17 @@ const Dashboard = () => {
             formData.append('draws', form.draws || 0);
             formData.append('losses', form.losses || 0);
             formData.append('screenshot', form.screenshot);
-            await API.post('/stats/efootball/submit/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+            const res = await API.post('/stats/efootball/submit/', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
             setEfSuccess({ ...efSuccess, [playerGameId]: 'Stats verified and approved by AI.' });
+            if (res.data.uploads_remaining !== undefined) {
+                setEfUploadStatus({ ...efUploadStatus, [playerGameId]: { uploads_remaining: res.data.uploads_remaining, daily_limit: 3, uploads_used: 3 - res.data.uploads_remaining } });
+            }
             loadAll();
         } catch (err) {
             setEfError({ ...efError, [playerGameId]: err.response?.data?.error || 'Submission failed.' });
+            if (err.response?.data?.uploads_remaining !== undefined) {
+                setEfUploadStatus({ ...efUploadStatus, [playerGameId]: { uploads_remaining: err.response.data.uploads_remaining, daily_limit: 3, uploads_used: 3 - err.response.data.uploads_remaining } });
+            }
         } finally { setEfLoading({ ...efLoading, [playerGameId]: false }); }
     };
 
@@ -907,62 +925,75 @@ const Dashboard = () => {
                                                     </form>
                                                 </motion.div>
                                             )}
-                                            {isEfootball && (
-                                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                                                    <p style={{ color: '#AAAAAA', fontSize: '0.88rem', marginBottom: '20px' }}>
-                                                        Submit your eFootball Division 1 match record below. Our AI will verify your stats automatically through your screenshot.
-                                                    </p>
-                                                    <form onSubmit={(e) => handleEfSubmit(e, pg.id)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                                                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-                                                            {['wins', 'draws', 'losses'].map((field) => (
-                                                                <div key={field}>
-                                                                    <label className="sf-label">{field}</label>
-                                                                    <input
-                                                                        className="sf-input"
-                                                                        type="number" min="0" placeholder="0"
-                                                                        onChange={(e) => updateEfForm(pg.id, field, e.target.value)}
-                                                                        required
-                                                                        style={{ borderColor: 'rgba(14,165,233,0.3)' }}
-                                                                    />
-                                                                </div>
-                                                            ))}
-                                                        </div>
-
-                                                        <ScannerUpload
-                                                            onFile={(file) => updateEfForm(pg.id, 'screenshot', file)}
-                                                            fileName={efForm[pg.id]?.screenshot?.name}
-                                                            accentColor="#0EA5E9"
-                                                        />
-
-                                                        {efError[pg.id] && <p className="error-msg">{efError[pg.id]}</p>}
-                                                        {efSuccess[pg.id] && <p className="success-msg">{efSuccess[pg.id]}</p>}
-
-                                                        <motion.button
-                                                            whileHover={{ scale: 1.02 }}
-                                                            whileTap={{ scale: 0.98 }}
-                                                            type="submit"
-                                                            disabled={efLoading[pg.id]}
-                                                            style={{
-                                                                background: '#0EA5E9', color: '#FFFFFF', border: 'none',
-                                                                padding: '12px 32px', fontFamily: 'Rajdhani', fontWeight: 700,
-                                                                fontSize: '0.95rem', letterSpacing: '0.1em', textTransform: 'uppercase',
-                                                                cursor: 'pointer', display: 'flex', alignItems: 'center',
-                                                                justifyContent: 'center', gap: '8px', width: '100%',
-                                                                boxShadow: '0 4px 20px rgba(14,165,233,0.3)',
-                                                            }}
-                                                        >
-                                                            <FiUpload size={14} />
-                                                            {efLoading[pg.id] ? 'AI Verifying...' : 'Submit for AI Verification'}
-                                                        </motion.button>
-                                                    </form>
-                                                </motion.div>
-                                            )}
                                             {isApiGame && (
                                                 <p style={{ color: '#AAAAAA', fontSize: '0.9rem', padding: '20px 0', margin: 0 }}>
                                                     Click <strong style={{ color: gc.color }}>Sync</strong> to fetch your {pg.game.name} stats automatically.
                                                 </p>
                                             )}
                                         </>
+                                    )}
+
+                                    {/* eFootball match record submit/update — always available so users can log new results */}
+                                    {isEfootball && (
+                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: gameStats ? '24px' : 0, paddingTop: gameStats ? '24px' : 0, borderTop: gameStats ? '1px solid rgba(255,255,255,0.08)' : 'none' }}>
+                                            <p style={{ color: '#AAAAAA', fontSize: '0.88rem', marginBottom: '4px' }}>
+                                                {gameStats ? 'Got a new result? Update your eFootball Division 1 record below.' : 'Submit your eFootball Division 1 match record below.'} Our AI will verify your stats automatically through your screenshot.
+                                            </p>
+                                            {efUploadStatus[pg.id] && (
+                                                <p style={{ color: efUploadStatus[pg.id].uploads_remaining === 0 ? '#FF4444' : '#0EA5E9', fontSize: '0.78rem', marginBottom: '16px', fontFamily: 'Rajdhani', fontWeight: 700, letterSpacing: '0.05em' }}>
+                                                    {efUploadStatus[pg.id].uploads_remaining} of {efUploadStatus[pg.id].daily_limit} screenshot verifications left today
+                                                </p>
+                                            )}
+                                            <form onSubmit={(e) => handleEfSubmit(e, pg.id)} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: efUploadStatus[pg.id] ? 0 : '16px' }}>
+                                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
+                                                    {['wins', 'draws', 'losses'].map((field) => (
+                                                        <div key={field}>
+                                                            <label className="sf-label">{field}</label>
+                                                            <input
+                                                                className="sf-input"
+                                                                type="number" min="0" placeholder="0"
+                                                                onChange={(e) => updateEfForm(pg.id, field, e.target.value)}
+                                                                required
+                                                                style={{ borderColor: 'rgba(14,165,233,0.3)' }}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                <ScannerUpload
+                                                    onFile={(file) => updateEfForm(pg.id, 'screenshot', file)}
+                                                    fileName={efForm[pg.id]?.screenshot?.name}
+                                                    accentColor="#0EA5E9"
+                                                />
+
+                                                {efError[pg.id] && <p className="error-msg">{efError[pg.id]}</p>}
+                                                {efSuccess[pg.id] && <p className="success-msg">{efSuccess[pg.id]}</p>}
+
+                                                <motion.button
+                                                    whileHover={{ scale: efUploadStatus[pg.id]?.uploads_remaining === 0 ? 1 : 1.02 }}
+                                                    whileTap={{ scale: efUploadStatus[pg.id]?.uploads_remaining === 0 ? 1 : 0.98 }}
+                                                    type="submit"
+                                                    disabled={efLoading[pg.id] || efUploadStatus[pg.id]?.uploads_remaining === 0}
+                                                    style={{
+                                                        background: efUploadStatus[pg.id]?.uploads_remaining === 0 ? '#333333' : '#0EA5E9',
+                                                        color: '#FFFFFF', border: 'none',
+                                                        padding: '12px 32px', fontFamily: 'Rajdhani', fontWeight: 700,
+                                                        fontSize: '0.95rem', letterSpacing: '0.1em', textTransform: 'uppercase',
+                                                        cursor: efUploadStatus[pg.id]?.uploads_remaining === 0 ? 'not-allowed' : 'pointer',
+                                                        display: 'flex', alignItems: 'center',
+                                                        justifyContent: 'center', gap: '8px', width: '100%',
+                                                        boxShadow: efUploadStatus[pg.id]?.uploads_remaining === 0 ? 'none' : '0 4px 20px rgba(14,165,233,0.3)',
+                                                    }}
+                                                >
+                                                    <FiUpload size={14} />
+                                                    {efLoading[pg.id]
+                                                        ? 'AI Verifying...'
+                                                        : efUploadStatus[pg.id]?.uploads_remaining === 0
+                                                            ? 'Daily Limit Reached'
+                                                            : 'Submit for AI Verification'}
+                                                </motion.button>
+                                            </form>
+                                        </motion.div>
                                     )}
                                 </motion.div>
                             );
